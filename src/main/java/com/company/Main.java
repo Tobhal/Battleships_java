@@ -1,6 +1,8 @@
 package com.company;
 
 import com.company.model.Board;
+import com.company.model.Boat;
+import com.company.model.Direction;
 import com.company.model.Player;
 
 import java.util.HashMap;
@@ -9,8 +11,9 @@ public class Main {
     public static void main(String[] args) {
         HashMap<String, Player> players = new HashMap<>();
 
-        Board.setDefaultSize(5);
+        Board.setDefaultSize(10);
 
+        // Player setup
         Player player1 = new Player("player 1", new Board());
         Player player2 = new Player("player 2", new Board());
         Player player3 = new Player("player 3", new Board());
@@ -29,12 +32,30 @@ public class Main {
             }
         }
 
-        players.get("player 1").getBoard().setPlace(1,1,1);
-        System.out.println(player1.getBoard().toString());
+        // "Game"
+        player1.getBoard().print();
 
-        System.out.println(player2.attackPlayer(player1, 1,1));
+        System.out.println(player2.attackPlayer(player1, 1,3));
+        System.out.println(player2.attackPlayer(player1, 1,2));
 
-        System.out.println(player1.getBoard().toString());
+        player1.getBoard().print();
+
+        System.out.println("------------------------------");
+
+        player3.placeBoat(1,1, Boat.DESTROYER, Direction.DOWN);
+        player3.getBoard().print();
+
+        player4.attackPlayer(player3, 1,1);
+        player4.attackPlayer(player3, 2,1);
+
+        player3.getBoard().print();
+
+        System.out.println("------------------------------");
+
+        player4.getAttackBoard(player3.getName()).print();
+
+
+
 
     }
 }
