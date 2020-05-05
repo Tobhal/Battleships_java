@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Player {
     private String name;
     private Board personalBoard;
-    private HashMap<String, Board> attackBoards;
+    private HashMap<String, Board> attackBoards = new HashMap<>();
 
     public Player() {
 
@@ -37,4 +37,17 @@ public class Player {
         return personalBoard;
     }
 
+    //Other
+    public boolean attackPlayer(Player player, int x, int y) {
+        boolean hit = player.getBoard().attaked(x,y);
+
+        if (hit) {
+            player.getBoard().setPlace(x, y, 2);
+            attackBoards.get(player.getName()).setPlace(x,y,2);
+            return true;
+        } else {
+            attackBoards.get(player.getName()).setPlace(x,y,3);
+            return false;
+        }
+    }
 }

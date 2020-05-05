@@ -1,3 +1,10 @@
+/* Board info:
+0 - empty
+1 - Boat
+2 - Hit
+3 - Miss
+ */
+
 package com.company.model;
 
 public class Board {
@@ -15,7 +22,7 @@ public class Board {
     }
 
     //Set
-    public void setDefaultSize(int size) {
+    public static void setDefaultSize(int size) {
         defaultSize = size;
     }
 
@@ -24,6 +31,9 @@ public class Board {
     }
 
     //Get
+    public int getPlaceValue(int x, int y) {
+        return boardMatrix[x][y];
+    }
 
 
     //Other
@@ -32,6 +42,14 @@ public class Board {
             for (int l = 0; l < boardMatrix.length; i++) {
                 boardMatrix[i][l] = 0;
             }
+        }
+    }
+
+    public boolean attaked(int x, int y) {
+        if (boardMatrix[x][y] == 0) {
+            return false;
+        } else {
+            return true;
         }
     }
 
