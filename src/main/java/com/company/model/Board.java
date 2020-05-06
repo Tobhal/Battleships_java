@@ -1,14 +1,18 @@
 /* Board info:
-0 - empty
-1 - Boat
-2 - Hit
-3 - Miss
+0 && 00 - empty
+1 && 01 - Miss
 
 10 - Carrier
 11 - Battleship
 12 - Cruiser
 13 - Submarine
 14 - Destroyer
+
+20 - Destroyed Carrier
+21 - Destroyed Battleship
+22 - Destroyed Cruiser
+23 - Destroyed Submarine
+24 - Destroyed Destroyer
  */
 
 package com.company.model;
@@ -24,7 +28,7 @@ public class Board {
         this.boardMatrix = new int[size][size];
     }
     public Board(int x, int y) {
-        this.boardMatrix = new int[x][y];
+        this.boardMatrix = new int[y][x];
     }
 
     //Set
@@ -33,12 +37,15 @@ public class Board {
     }
 
     public void setPlace(int x, int y, int value) {
-        this.boardMatrix[x][y] = value;
+        this.boardMatrix[y][x] = value;
     }
 
     //Get
     public int getPlaceValue(int x, int y) {
         return boardMatrix[x][y];
+    }
+    public static int getDefaultSize() {
+        return defaultSize;
     }
 
 
@@ -52,7 +59,7 @@ public class Board {
     }
 
     public boolean attacked(int x, int y) {
-        switch (boardMatrix[x][y]) {
+        switch (boardMatrix[y][x]) {
             case 10:
             case 11:
             case 12:
@@ -71,7 +78,7 @@ public class Board {
 
         for (int[] x : boardMatrix) {
             for (Integer y : x) {
-                string.append("|").append(y);
+                string.append("|").append(y == 0 ? "00" : y);
             }
             string.append("|\n");
         }

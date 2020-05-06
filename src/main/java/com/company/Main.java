@@ -33,27 +33,29 @@ public class Main {
         }
 
         // "Game"
-        player1.getBoard().print();
+        for (Player player : players.values()) {
+            System.out.println(player.getName());
+            player.placeBoat(0,0, Boat.CARRIER, Direction.DOWN);
+            player.placeBoat(1,0, Boat.BATTLESHIP, Direction.DOWN);
+            player.placeBoat(2,0, Boat.CRUISER, Direction.DOWN);
+            player.placeBoat(3,0, Boat.SUBMARINE, Direction.DOWN);
+            player.placeBoat(4,0, Boat.DESTROYER, Direction.DOWN);
 
-        System.out.println(player2.attackPlayer(player1, 1,3));
-        System.out.println(player2.attackPlayer(player1, 1,2));
+            player.getBoard().print();
+        }
 
-        player1.getBoard().print();
 
-        System.out.println("------------------------------");
 
-        player3.placeBoat(1,1, Boat.DESTROYER, Direction.DOWN);
-        player3.getBoard().print();
+        System.out.println("attack part");
 
-        player4.attackPlayer(player3, 1,1);
-        player4.attackPlayer(player3, 2,1);
+        player1.getAttackBoard("player 2").print();
 
-        player3.getBoard().print();
+        player1.attackPlayer(player2,4,0);
+        player1.attackPlayer(player2,4,1);
 
-        System.out.println("------------------------------");
+        System.out.println("Get board");
 
-        player4.getAttackBoard(player3.getName()).print();
-
+        player1.getAttackBoard("player 2").print();
 
 
 

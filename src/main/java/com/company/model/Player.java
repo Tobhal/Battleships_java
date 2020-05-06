@@ -43,19 +43,18 @@ public class Player {
     //Other
     public boolean attackPlayer(Player player, int x, int y) {
         boolean hit = player.getBoard().attacked(x,y);
-        int placeValue;
+        int placeValue = player.getBoard().getPlaceValue(x,y);
 
         if (hit) {
-            player.getBoard().setPlace(x, y, 2);
-            attackBoards.get(player.getName()).setPlace(x,y,player.getBoard().getPlaceValue(x, y) + 10);
-            placeValue = player.getBoard().getPlaceValue(x, y);
+            player.getBoard().setPlace(x,y, placeValue + 10);
+            attackBoards.get(player.getName()).setPlace(x,y, placeValue + 10);
+            System.out.println(boatDestroyed(x,y, placeValue, player));
+            // boatDestroyed(x,y, placeValue);
             return true;
         } else {
-            attackBoards.get(player.getName()).setPlace(x,y,3);
+            attackBoards.get(player.getName()).setPlace(x,y, 1);
             return false;
         }
-
-
     }
 
     public void placeBoat(int x, int y, Boat boat, Direction direction) {
@@ -63,26 +62,27 @@ public class Player {
             getBoard().setPlace(x,y,boat.getId());
             switch (direction) {
                 case UP:
-                    x--;
-                    break;
-                case DOWN:
-                    x++;
-                    break;
-                case LEFT:
                     y--;
                     break;
-                case RIGHT:
+                case DOWN:
                     y++;
+                    break;
+                case LEFT:
+                    x--;
+                    break;
+                case RIGHT:
+                    x++;
                     break;
             }
 
         }
     }
 
-    public boolean boatDestroyed(int x, int y, int id) {
+    public boolean boatDestroyed(int x, int y, int id, Player player) {
         Boat boat = null;
         boolean end = false;
-        int tempX, tempY, hit;
+        int tempX, tempY;
+        int hit = 0;
 
         for (Boat boat1 : Boat.values()) {
             if (boat1.getId() == id) {
@@ -92,23 +92,23 @@ public class Player {
         }
 
         for (Direction direction : Direction.values()) {
-            hit = 0;
             tempX = x;
             tempY = y;
             while (!end) {
-                if (getBoard().getPlaceValue(tempX + direction.getX(), tempY + direction.getY()) == boat.getId()) {
-                    if (hit == boat.getValue()) {
-                        end = true;
-                    } else {
-                        tempX++;
-                        tempY++;
-                    }
+                if (hit == boat.getValue()) {
+                    return true;
+                } else if (tempX < 0 || tempY < 0 || tempX > Board.getDefaultSize() || tempY > Board.getDefaultSize()) {    // TODO: change default size to somehing that is better. Test length of x and y and not use default size.
+                    break;
+                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == 0) {
+                    break;
+                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == boat.getId() + 10) {
+                    hit++;
+                    tempX += direction.getX();
+                    tempY += direction.getY();
                 }
             }
-
-            if (end)
-                return true;
         }
+
         return false;
     }
 }

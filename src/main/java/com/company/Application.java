@@ -63,7 +63,7 @@ public class Application {
                 y = Integer.parseInt(sc.next());
 
                 System.out.print("Direction (up, down, left, right): ");
-                direction = Direction.valueOf(sc.next());
+                direction = Direction.valueOf(sc.next().toUpperCase());
 
                 player.placeBoat(x, y, boat, direction);
             }
