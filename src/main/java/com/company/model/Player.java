@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class Player {
     private String name;
     private Board personalBoard;
+    private int numberOfBoatsAlive = 0;
     private HashMap<String, Board> attackBoards = new HashMap<>();
 
     public Player() {
@@ -23,10 +24,21 @@ public class Player {
         this.attackBoards = attackBoards;
     }
 
-
     //Set
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setPersonalBoard(Board personalBoard) {
+        this.personalBoard = personalBoard;
+    }
+    public void setAttackBoards(HashMap<String, Board> attackBoards) {
+        this.attackBoards = attackBoards;
+    }
     public void addAttackBoard(Player player) {
         this.attackBoards.put(player.getName(), new Board());
+    }
+    public void setNumberOfBoatsAlive(int numberOfBoatsAlive) {
+        this.numberOfBoatsAlive = numberOfBoatsAlive;
     }
 
     //Get
@@ -38,6 +50,9 @@ public class Player {
     }
     public Board getAttackBoard(String playerName) {
         return attackBoards.get(playerName);
+    }
+    public int getNumberOfBoatsAlive() {
+        return numberOfBoatsAlive;
     }
 
     //Other
@@ -59,6 +74,7 @@ public class Player {
     }
 
     public void placeBoat(int x, int y, Boat boat, Direction direction) {
+        numberOfBoatsAlive += 1;
         for (int i = 0; i < boat.getValue(); i++) {
             getBoard().setPlace(x,y,boat.getId());
             switch (direction) {
@@ -98,6 +114,7 @@ public class Player {
             end = false;
             while (!end) {
                 if (hit == boat.getValue() - 1) {   // If the boat is destroyed
+                    player.removeBoat(1);
                     return true;
                 } else if (tempX < 0 || tempY < 0 || tempX > Board.getDefaultSize() || tempY > Board.getDefaultSize()) {    // If checking outside of the board    // TODO: change default size to somehing that is better. Test length of x and y and not use default size.
                     end = true;
@@ -114,5 +131,13 @@ public class Player {
         }
 
         return false;
+    }
+
+    public boolean hasNoBoatsLeft() {
+        return numberOfBoatsAlive == 0;
+    }
+
+    public void removeBoat(int numberOfBoats) {
+        numberOfBoatsAlive -= numberOfBoats;
     }
 }

@@ -35,7 +35,6 @@ public class Board {
     public static void setDefaultSize(int size) {
         defaultSize = size;
     }
-
     public void setPlace(int x, int y, int value) {
         this.boardMatrix[y][x] = value;
     }
@@ -47,7 +46,6 @@ public class Board {
     public static int getDefaultSize() {
         return defaultSize;
     }
-
 
     //Other
     public void resetBoard() {
@@ -70,7 +68,6 @@ public class Board {
                 return false;
         }
     }
-
 
     //Print
     public void print() {
@@ -107,7 +104,5 @@ public class Board {
 }
 
 /*
-TODO: make attacking a board work.
-    Now when attacking i change the value to 2, but i need to change it to something that makes the boatDestroyed() method from Player work.
-    This can be something like adding 10 to the value (so the value is 20 to 24), the 2 indication that the boat is hit.
+
  */
