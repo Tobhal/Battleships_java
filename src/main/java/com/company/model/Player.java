@@ -41,18 +41,19 @@ public class Player {
     }
 
     //Other
-    public boolean attackPlayer(Player player, int x, int y) {
-        boolean hit = player.getBoard().attacked(x,y);
-        int placeValue = player.getBoard().getPlaceValue(x,y);
+    public boolean attackPlayer(Player attackedPlayer, int x, int y) {
+        boolean hit = attackedPlayer.getBoard().attacked(x,y);
+        int placeValue = attackedPlayer.getBoard().getPlaceValue(x,y);
 
         if (hit) {
-            player.getBoard().setPlace(x,y, placeValue + 10);
-            attackBoards.get(player.getName()).setPlace(x,y, placeValue + 10);
-            System.out.println(boatDestroyed(x,y, placeValue, player));
+            placeValue += 10;
+            attackedPlayer.getBoard().setPlace(x,y, placeValue);
+            attackBoards.get(attackedPlayer.getName()).setPlace(x,y, placeValue);
+            System.out.println(boatDestroyed(x,y, placeValue - 10, attackedPlayer));
             // boatDestroyed(x,y, placeValue);
             return true;
         } else {
-            attackBoards.get(player.getName()).setPlace(x,y, 1);
+            attackBoards.get(attackedPlayer.getName()).setPlace(x,y, 1);
             return false;
         }
     }
@@ -92,16 +93,19 @@ public class Player {
         }
 
         for (Direction direction : Direction.values()) {
-            tempX = x;
-            tempY = y;
+            tempX = x + direction.getX();
+            tempY = y + direction.getY();
+            end = false;
             while (!end) {
-                if (hit == boat.getValue()) {
+                if (hit == boat.getValue() - 1) {   // If the boat is destroyed
                     return true;
-                } else if (tempX < 0 || tempY < 0 || tempX > Board.getDefaultSize() || tempY > Board.getDefaultSize()) {    // TODO: change default size to somehing that is better. Test length of x and y and not use default size.
-                    break;
-                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == 0) {
-                    break;
-                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == boat.getId() + 10) {
+                } else if (tempX < 0 || tempY < 0 || tempX > Board.getDefaultSize() || tempY > Board.getDefaultSize()) {    // If checking outside of the board    // TODO: change default size to somehing that is better. Test length of x and y and not use default size.
+                    end = true;
+                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == 0) {    // if the place is 0 (empty place)
+                    end = true;
+                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == 1) {    // if the place is 1 (Already hit place)
+                    end = true;
+                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == boat.getId() + 10) {    // If the place is the same hit boat
                     hit++;
                     tempX += direction.getX();
                     tempY += direction.getY();

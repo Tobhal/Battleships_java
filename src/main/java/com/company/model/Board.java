@@ -42,7 +42,7 @@ public class Board {
 
     //Get
     public int getPlaceValue(int x, int y) {
-        return boardMatrix[x][y];
+        return boardMatrix[y][x];
     }
     public static int getDefaultSize() {
         return defaultSize;
@@ -78,7 +78,14 @@ public class Board {
 
         for (int[] x : boardMatrix) {
             for (Integer y : x) {
-                string.append("|").append(y == 0 ? "00" : y);
+                string.append("|");
+                        //.append(y == 0 ? "00" : y);
+                if (y == 0)
+                    string.append("00");
+                else if (y == 1)
+                    string.append("01");
+                else
+                    string.append(y);
             }
             string.append("|\n");
         }
