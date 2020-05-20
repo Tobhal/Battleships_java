@@ -5,6 +5,7 @@ import com.company.model.Boat;
 import com.company.model.Direction;
 import com.company.model.Player;
 
+import java.security.UnresolvedPermission;
 import java.util.HashMap;
 
 public class Main {
@@ -44,6 +45,21 @@ public class Main {
             // player.getBoard().print();
         }
 
+        // False
+        System.out.println("False:");
+        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.UP));
+        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.LEFT));
+        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.UP_LEFT));
+        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.UP_RIGHT));
+        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.DOWN_LEFT));
+
+        System.out.println("\nTrue:");
+        // True
+        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.DOWN));
+        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.RIGHT));
+        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.DOWN_RIGHT));
+
+        System.out.println("----****----");
 
         System.out.println("Player 2 board:");
         player2.getBoard().print();
@@ -68,7 +84,9 @@ public class Main {
 
         System.out.println("\nTest if correct");
         player1.getAttackBoard("player 2").print();
-
-
     }
 }
+
+/*
+
+ */

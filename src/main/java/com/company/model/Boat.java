@@ -7,11 +7,11 @@ public enum Boat {
     SUBMARINE(3, 13),
     DESTROYER(2, 14);
 
-    private final int value;
+    private final int length;
     private final int id;
 
-    Boat(int value, int id) {
-        this.value = value;
+    Boat(int length, int id) {
+        this.length = length;
         this.id = id;
     }
 
@@ -19,7 +19,7 @@ public enum Boat {
         return id;
     }
 
-    public int getValue() {
-        return value;
+    public int getLength() {
+        return length;
     }
 }

@@ -64,35 +64,31 @@ public class Player {
             placeValue += 10;
             attackedPlayer.getBoard().setPlace(x,y, placeValue);
             attackBoards.get(attackedPlayer.getName()).setPlace(x,y, placeValue);
+            System.out.println("Hit");
             System.out.println(boatDestroyed(x,y, placeValue - 10, attackedPlayer));
             // boatDestroyed(x,y, placeValue);
             return true;
         } else {
             attackBoards.get(attackedPlayer.getName()).setPlace(x,y, 1);
+            System.out.println("Miss");
             return false;
         }
     }
 
     public void placeBoat(int x, int y, Boat boat, Direction direction) {
         numberOfBoatsAlive += 1;
-        for (int i = 0; i < boat.getValue(); i++) {
-            getBoard().setPlace(x,y,boat.getId());
-            switch (direction) {
-                case UP:
-                    y--;
-                    break;
-                case DOWN:
-                    y++;
-                    break;
-                case LEFT:
-                    x--;
-                    break;
-                case RIGHT:
-                    x++;
-                    break;
-            }
 
+        if (personalBoard.boatIsOutside(x, y, boat, direction)) {
+            for (int i = 0; i < boat.getLength(); i++) {
+                personalBoard.setPlace(x,y,boat.getId());
+                x += direction.getX();
+                y += direction.getY();
+            }
+        } else {
+            // Boat is outside of the board. Do something to fix it.
         }
+
+
     }
 
     public boolean boatDestroyed(int x, int y, int id, Player player) {
@@ -105,6 +101,9 @@ public class Player {
             if (boat1.getId() == id) {
                 boat = boat1;
                 break;
+            } else if (boat1.getId() == id - 10) {
+                boat = boat1;
+                break;
             }
         }
 
@@ -113,10 +112,10 @@ public class Player {
             tempY = y + direction.getY();
             end = false;
             while (!end) {
-                if (hit == boat.getValue() - 1) {   // If the boat is destroyed
+                if (hit >= boat.getLength() - 1) {   // If the boat is destroyed
                     player.removeBoat(1);
                     return true;
-                } else if (tempX < 0 || tempY < 0 || tempX > Board.getDefaultSize() || tempY > Board.getDefaultSize()) {    // If checking outside of the board    // TODO: change default size to somehing that is better. Test length of x and y and not use default size.
+                } else if (tempX < 0 || tempY < 0 || tempX > Board.getDefaultX() - 1 || tempY > Board.getDefaultY() - 1) {    // If checking outside of the board    // TODO: change default size to somehing that is better. Test length of x and y and not use default size.
                     end = true;
                 } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == 0) {    // if the place is 0 (empty place)
                     end = true;
@@ -133,11 +132,15 @@ public class Player {
         return false;
     }
 
-    public boolean hasNoBoatsLeft() {
+    public boolean noBoatsLeft() {
         return numberOfBoatsAlive == 0;
     }
 
     public void removeBoat(int numberOfBoats) {
         numberOfBoatsAlive -= numberOfBoats;
+    }
+
+    public void printAttackBoard(String player) {
+        attackBoards.get(player).print();
     }
 }

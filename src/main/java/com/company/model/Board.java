@@ -17,12 +17,15 @@
 
 package com.company.model;
 
+import java.util.ArrayList;
+
 public class Board {
     private int[][] boardMatrix;
-    private static int defaultSize = 10;
+    private static int defaultX = 10;
+    private static int defaultY = 10;
 
     public Board() {
-        this.boardMatrix = new int[defaultSize][defaultSize];
+        this.boardMatrix = new int[defaultX][defaultY];
     }
     public Board(int size) {
         this.boardMatrix = new int[size][size];
@@ -33,7 +36,12 @@ public class Board {
 
     //Set
     public static void setDefaultSize(int size) {
-        defaultSize = size;
+        defaultX = size;
+        defaultY = size;
+    }
+    public static void setDefaultSize(int x, int y) {
+        defaultX = x;
+        defaultY = y;
     }
     public void setPlace(int x, int y, int value) {
         this.boardMatrix[y][x] = value;
@@ -44,7 +52,13 @@ public class Board {
         return boardMatrix[y][x];
     }
     public static int getDefaultSize() {
-        return defaultSize;
+        return defaultX * defaultY;
+    }
+    public static int getDefaultX() {
+        return defaultX;
+    }
+    public static int getDefaultY() {
+        return defaultY;
     }
 
     //Other
@@ -63,9 +77,25 @@ public class Board {
             case 12:
             case 13:
             case 14:
+            case 20:
+            case 21:
+            case 22:
+            case 23:
+            case 24:
                 return true;
             default:
                 return false;
+        }
+    }
+
+    public boolean boatIsOutside(int x, int y, Boat boat, Direction direction) {
+        int boatEndX = x + (boat.getLength() * direction.getX());
+        int boatEndY = y + (boat.getLength() * direction.getY());
+
+        if (boatEndX < 0 || boatEndX > Board.getDefaultX() || boatEndY < 0 || boatEndY > Board.getDefaultY()) {
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -73,7 +103,19 @@ public class Board {
     public void print() {
         StringBuilder string = new StringBuilder();
 
+        string.append("  ");
+
+        for (int i = 0; i < Board.getDefaultX(); i++) {
+            string.append((i < Board.getDefaultX() ? "  " : " ")).append(i);
+        }
+        string.append("\n");
+
+        int index = 0;
+
         for (int[] x : boardMatrix) {
+            string.append(index).append(" ");
+            index++;
+
             for (Integer y : x) {
                 string.append("|");
                         //.append(y == 0 ? "00" : y);
@@ -86,6 +128,7 @@ public class Board {
             }
             string.append("|\n");
         }
+
         System.out.println(string.toString());
     }
 
