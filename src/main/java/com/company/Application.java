@@ -26,10 +26,10 @@ public class Application {
 
         //Game setup
         Board.setDefaultSize(10);
-        //boatsToPlace.add(Boat.CARRIER);
-        //boatsToPlace.add(Boat.BATTLESHIP);
-        //boatsToPlace.add(Boat.CRUISER);
-        //boatsToPlace.add(Boat.SUBMARINE);
+        boatsToPlace.add(Boat.CARRIER);
+        boatsToPlace.add(Boat.BATTLESHIP);
+        boatsToPlace.add(Boat.CRUISER);
+        boatsToPlace.add(Boat.SUBMARINE);
         boatsToPlace.add(Boat.DESTROYER);
 
         //Add players
