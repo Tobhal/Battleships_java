@@ -1,6 +1,7 @@
 package com.company.model;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class Player {
     private String name;
@@ -125,6 +126,8 @@ public class Player {
                     hit++;
                     tempX += direction.getX();
                     tempY += direction.getY();
+                } else {
+                    end = true;
                 }
             }
         }
