@@ -1,11 +1,7 @@
 package com.company;
 
-import com.company.model.Board;
-import com.company.model.Boat;
-import com.company.model.Direction;
-import com.company.model.Player;
+import com.company.model.*;
 
-import java.security.UnresolvedPermission;
 import java.util.HashMap;
 
 public class Main {
@@ -18,7 +14,10 @@ public class Main {
         Player player1 = new Player("player 1", new Board());
         Player player2 = new Player("player 2", new Board());
         Player player3 = new Player("player 3", new Board());
-        Player player4 = new Player("player 4", new Board());
+        Player player4 = new Bot("player 4", new Board());
+
+        System.out.println(player1.getClass());
+        System.out.println(player1.getClass());
 
         players.put(player1.getName(), player1);
         players.put(player2.getName(), player2);
@@ -26,9 +25,9 @@ public class Main {
         players.put(player4.getName(), player4);
 
         for (Player player : players.values()) {
-            for (Player otherPlayer : players.values()) {
-                if (!player.getName().equals(otherPlayer.getName())) {
-                    player.addAttackBoard(otherPlayer);
+            for (Player otherplayer : players.values()) {
+                if (!player.getName().equals(otherplayer.getName())) {
+                    player.addAttackBoard(otherplayer);
                 }
             }
         }
@@ -47,20 +46,19 @@ public class Main {
 
         // False
         System.out.println("False:");
-        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.UP));
-        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.LEFT));
-        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.UP_LEFT));
-        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.UP_RIGHT));
-        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.DOWN_LEFT));
+        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.UP));
+        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.LEFT));
+        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.UP_LEFT));
+        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.UP_RIGHT));
+        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.DOWN_LEFT));
 
         System.out.println("\nTrue:");
         // True
-        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.DOWN));
-        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.RIGHT));
-        System.out.println(player1.getBoard().boatIsOutside(0,0, Boat.CARRIER, Direction.DOWN_RIGHT));
+        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.DOWN));
+        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.RIGHT));
+        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.DOWN_RIGHT));
 
         System.out.println("----****----");
-
         System.out.println("Player 2 board:");
         player2.getBoard().print();
 

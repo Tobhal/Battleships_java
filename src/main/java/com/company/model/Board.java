@@ -46,6 +46,13 @@ public class Board {
     public void setPlace(int x, int y, int value) {
         this.boardMatrix[y][x] = value;
     }
+    public void setBoat(int x, int y, Boat boat, Direction direction) {   // TODO: Add some error handling, trow error if boat is outside board...
+        for (int i = 0; i < boat.getLength(); i++) {
+            setPlace(x, y, boat.getId());
+            x += direction.getX();
+            y += direction.getY();
+        }
+    }
 
     //Get
     public int getPlaceValue(int x, int y) {
@@ -88,7 +95,7 @@ public class Board {
         }
     }
 
-    public boolean boatIsOutside(int x, int y, Boat boat, Direction direction) {
+    public boolean boatIsInsideBoard(int x, int y, Boat boat, Direction direction) {
         int boatEndX = x + (boat.getLength() * direction.getX());
         int boatEndY = y + (boat.getLength() * direction.getY());
 
@@ -97,6 +104,26 @@ public class Board {
         } else {
             return true;
         }
+    }
+
+    public boolean boatsOverlap(int x, int y, Boat boat, Direction direction) {
+        for (int i = 0; i < boat.getLength(); i++) {
+            if (boardMatrix[y][x] == 0) {        //Has not hit something
+                x += direction.getX();
+                y += direction.getY();
+            } else if (boardMatrix[y][x] != 0) {    //Boat hits something
+                return true;
+            }
+        }
+        return false;   //Does not overlap a boat
+    }
+
+    public boolean canShot(int x, int y) {
+        return boardMatrix[y][x] == 0;
+    }
+
+    public boolean isInsideOfBoard(int x, int y) {
+        return (y <= defaultY && y >= 0) || (x <= defaultX && x >= 0);
     }
 
     //Print

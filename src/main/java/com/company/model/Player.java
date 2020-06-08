@@ -1,7 +1,7 @@
 package com.company.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Player {
     private String name;
@@ -9,23 +9,15 @@ public class Player {
     private int numberOfBoatsAlive = 0;
     private HashMap<String, Board> attackBoards = new HashMap<>();
 
-    public Player() {
+    private static ArrayList<Player> availeblePlayers = new ArrayList<>();
+    private static ArrayList<Direction> useDirections = new ArrayList<>();
 
-    }
-    public Player(String name) {
-        this.name = name;
-    }
     public Player(String name, Board personalBoard) {
         this.name = name;
         this.personalBoard = personalBoard;
     }
-    public Player(String name, Board personalBoard, HashMap<String, Board> attackBoards) {
-        this.name = name;
-        this.personalBoard = personalBoard;
-        this.attackBoards = attackBoards;
-    }
 
-    //Set
+    //Sett
     public void setName(String name) {
         this.name = name;
     }
@@ -42,6 +34,10 @@ public class Player {
         this.numberOfBoatsAlive = numberOfBoatsAlive;
     }
 
+    public static void setUseDirections(ArrayList<Direction> directionArrayList) {
+        useDirections.addAll(directionArrayList);
+    }
+
     //Get
     public String getName() {
         return this.name;
@@ -52,8 +48,15 @@ public class Player {
     public Board getAttackBoard(String playerName) {
         return attackBoards.get(playerName);
     }
+    public Board getPersonalBoard() {
+        return personalBoard;
+    }
     public int getNumberOfBoatsAlive() {
         return numberOfBoatsAlive;
+    }
+
+    public static ArrayList<Direction> getUseDirections() {
+        return useDirections;
     }
 
     //Other
@@ -62,12 +65,13 @@ public class Player {
         int placeValue = attackedPlayer.getBoard().getPlaceValue(x,y);
 
         if (hit) {
-            placeValue += 10;
+            if (placeValue < 19)
+                placeValue += 10;
+
             attackedPlayer.getBoard().setPlace(x,y, placeValue);
             attackBoards.get(attackedPlayer.getName()).setPlace(x,y, placeValue);
             System.out.println("Hit");
             System.out.println(boatDestroyed(x,y, placeValue - 10, attackedPlayer));
-            // boatDestroyed(x,y, placeValue);
             return true;
         } else {
             attackBoards.get(attackedPlayer.getName()).setPlace(x,y, 1);
@@ -79,7 +83,7 @@ public class Player {
     public void placeBoat(int x, int y, Boat boat, Direction direction) {
         numberOfBoatsAlive += 1;
 
-        if (personalBoard.boatIsOutside(x, y, boat, direction)) {
+        if (personalBoard.boatIsInsideBoard(x, y, boat, direction) && !personalBoard.boatsOverlap(x, y, boat, direction)) {
             for (int i = 0; i < boat.getLength(); i++) {
                 personalBoard.setPlace(x,y,boat.getId());
                 x += direction.getX();
@@ -94,7 +98,7 @@ public class Player {
 
     public boolean boatDestroyed(int x, int y, int id, Player player) {
         Boat boat = null;
-        boolean end = false;
+        boolean running;
         int tempX, tempY;
         int hit = 0;
 
@@ -108,26 +112,29 @@ public class Player {
             }
         }
 
-        for (Direction direction : Direction.values()) {
+        if (boat == null)   // Exit if there is no boat
+            return false;
+
+        for (Direction direction : useDirections) {
             tempX = x + direction.getX();
             tempY = y + direction.getY();
-            end = false;
-            while (!end) {
+            running = true;
+            while (running) {
                 if (hit >= boat.getLength() - 1) {   // If the boat is destroyed
                     player.removeBoat(1);
                     return true;
                 } else if (tempX < 0 || tempY < 0 || tempX > Board.getDefaultX() - 1 || tempY > Board.getDefaultY() - 1) {    // If checking outside of the board    // TODO: change default size to somehing that is better. Test length of x and y and not use default size.
-                    end = true;
+                    running = false;
                 } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == 0) {    // if the place is 0 (empty place)
-                    end = true;
+                    running = false;
                 } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == 1) {    // if the place is 1 (Already hit place)
-                    end = true;
+                    running = false;
                 } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == boat.getId() + 10) {    // If the place is the same hit boat
                     hit++;
                     tempX += direction.getX();
                     tempY += direction.getY();
                 } else {
-                    end = true;
+                    running = false;
                 }
             }
         }
@@ -135,14 +142,15 @@ public class Player {
         return false;
     }
 
-    public boolean noBoatsLeft() {
-        return numberOfBoatsAlive == 0;
-    }
-
     public void removeBoat(int numberOfBoats) {
         numberOfBoatsAlive -= numberOfBoats;
     }
 
+    public boolean noBoatsLeft() {
+        return numberOfBoatsAlive == 0;
+    }
+
+    //Print
     public void printAttackBoard(String player) {
         attackBoards.get(player).print();
     }

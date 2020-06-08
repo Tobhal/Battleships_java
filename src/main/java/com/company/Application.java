@@ -1,9 +1,6 @@
 package com.company;
 
-import com.company.model.Board;
-import com.company.model.Boat;
-import com.company.model.Direction;
-import com.company.model.Player;
+import com.company.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,31 +10,45 @@ public class Application {
 
     public static Scanner sc = new Scanner(System.in);
     public static boolean running = true;
-    public static int x = 0;
-    public static int y = 0;
+    public static int x = 0, y = 0, bots = 0;
 
     public static HashMap<String, Player> players = new HashMap<>();
     public static ArrayList<Boat> boatsToPlace = new ArrayList<>();
 
     public static ArrayList<String> playersOut = new ArrayList<>();
+    public static ArrayList<Direction> directionsUse = new ArrayList<>();
 
     public static void main(String[] args) {
         System.out.println("Application - test game");
 
         //Game setup
         Board.setDefaultSize(10);
-        //boatsToPlace.add(Boat.CARRIER);
-        //boatsToPlace.add(Boat.BATTLESHIP);
-        //boatsToPlace.add(Boat.CRUISER);
+
+        boatsToPlace.add(Boat.CARRIER);
+        boatsToPlace.add(Boat.BATTLESHIP);
+        boatsToPlace.add(Boat.CRUISER);
         boatsToPlace.add(Boat.SUBMARINE);
         boatsToPlace.add(Boat.DESTROYER);
+
+        directionsUse.add(Direction.UP);
+        directionsUse.add(Direction.DOWN);
+        directionsUse.add(Direction.LEFT);
+        directionsUse.add(Direction.RIGHT);
+
+        /*
+        directionsUse.add(Direction.UP_LEFT);
+        directionsUse.add(Direction.UP_RIGHT);
+        directionsUse.add(Direction.DOWN_RIGHT);
+        directionsUse.add(Direction.DOWN_LEFT);
+        */
+
+        Player.setUseDirections(directionsUse);
 
         //Add players
         System.out.println("Add player");
 
-
         while (running) {
-            System.out.print("add player or move on (1/2): ");
+            System.out.print("add player or move on (1/2/3(bot)): ");
             switch (sc.next()) {
                 case "1":
                     addPlayer();
@@ -46,6 +57,8 @@ public class Application {
                     running = false;
                     System.out.println(players.size());
                     break;
+                case "3":
+                    addBot();
                 default:
                     System.out.println("Pleas enter 1 or 2");
                     break;
@@ -68,16 +81,25 @@ public class Application {
 
         //Place boats
         for (Player player : players.values()) {
-            System.out.println("\n\n\n");
-            System.out.println(player.getName() + " place your boat" + (boatsToPlace.size() == 1 ? ":" : "s:"));
+            if (player instanceof Bot) {
+                System.out.println(player.getName() + " placed his boats");
 
-            for (Boat boat : boatsToPlace) {
-                placeBoat(player, boat);
+                for (Boat boat : boatsToPlace) {
+                    Bot bot = (Bot)player;
+
+                    bot.placeBoat(boat);
+                }
+            } else {
+                System.out.println("\n\n\n");
+                System.out.println(player.getName() + " place your boat" + (boatsToPlace.size() == 1 ? ":" : "s:"));
+
+                for (Boat boat : boatsToPlace) {
+                    placeBoat(player, boat);
+                }
             }
 
-            System.out.println("----------");
+            player.getBoard().print();
         }
-
 
         //Players attack
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
@@ -85,7 +107,6 @@ public class Application {
         System.out.println("***  Attack Face ***");
         System.out.println("********************");
         System.out.println("\n\n\n\n\n");
-
 
         running = true;
         while (running) {
@@ -99,22 +120,35 @@ public class Application {
                 if (playersOut.contains(player.getName()))
                     continue;
 
-                System.out.println("Players available:");
+                if (player instanceof Bot) {
+                    Bot bot = (Bot)player;
 
-                for (Player player1 : players.values())
-                    System.out.print((playersOut.contains(player1.getName()) ? "" : player1.getName() + ", "));
+                    ArrayList<Player> availablePlayer = new ArrayList<>();
 
-                System.out.print("\n");
+                    players.values().forEach(p -> {
+                        if (!p.getName().equals(player.getName()))
+                            availablePlayer.add(p);
+                    });
 
-                System.out.print(player.getName() + " select player to attack (name of player, not you): \n");
+                    bot.attackPlayer(availablePlayer);
 
-                attackPlayer(player);
+                } else {
+                    System.out.println("\n\n\n\n\n\n");
+                    System.out.println("Players available:");
+
+                    for (Player player1 : players.values())
+                        System.out.print((playersOut.contains(player1.getName()) ? "" : player1.getName() + ", "));
+
+                    System.out.print("\n");
+
+                    System.out.print(player.getName() + " select player to attack (name of player, not you): \n");
+
+                    attackPlayer(player);
+                }
             }
 
             for (String playerOut : playersOut)
                 players.remove(playerOut);
-
-
         }
 
         //End
@@ -132,6 +166,13 @@ public class Application {
             addPlayer();
         else
             players.put(playerName, new Player(playerName, new Board()));
+    }
+
+    public static void addBot() {
+        bots++;
+        String botName = "bot_" + bots;
+
+        players.put(botName, new Bot(botName, new Board()));
     }
 
     public static void placeBoat(Player player, Boat boat) {
@@ -153,9 +194,13 @@ public class Application {
         }
 
         System.out.print("Direction (up, down, left, right): ");
-        Direction direction = Direction.valueOf(sc.next().toUpperCase());
+        Direction direction = Direction.valueOf(sc.next().toUpperCase());   //TODO: #1
+        System.out.println("-----");
 
-        if (player.getBoard().boatIsOutside(x, y, boat, direction)) {
+        if (player.getBoard().boatsOverlap(x, y, boat, direction)) {
+            System.out.println("Boat overlaps another boat. Try again!");
+            placeBoat(player, boat);
+        } else if (player.getBoard().boatIsInsideBoard(x, y, boat, direction)) {
             player.placeBoat(x, y, boat, direction);
         } else {
             System.out.println("\nThe boat wil be outside of the board.\nPleace try again, and do not place the boat outside of the board\n");
@@ -209,3 +254,8 @@ public class Application {
         running = false;
     }
 }
+
+/*
+TODO: #1 - Change code so it checks directionUse, so you cant use a direction that cant be used
+
+*/
