@@ -70,12 +70,12 @@ public class Player {
 
             attackedPlayer.getBoard().setPlace(x,y, placeValue);
             attackBoards.get(attackedPlayer.getName()).setPlace(x,y, placeValue);
-            System.out.println("Hit");
-            System.out.println(boatDestroyed(x,y, placeValue - 10, attackedPlayer));
+            //System.out.println("Hit");
+            //System.out.println(boatDestroyed(x,y, placeValue - 10, attackedPlayer));
             return true;
         } else {
             attackBoards.get(attackedPlayer.getName()).setPlace(x,y, 1);
-            System.out.println("Miss");
+            //System.out.println("Miss");
             return false;
         }
     }

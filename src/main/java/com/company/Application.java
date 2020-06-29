@@ -5,6 +5,7 @@ import com.company.model.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Application {
 
@@ -18,7 +19,7 @@ public class Application {
     public static ArrayList<String> playersOut = new ArrayList<>();
     public static ArrayList<Direction> directionsUse = new ArrayList<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         System.out.println("Application - test game");
 
         //Game setup
@@ -145,6 +146,10 @@ public class Application {
 
                     attackPlayer(player);
                 }
+
+                System.out.println("\n");
+                TimeUnit.SECONDS.sleep(1);
+
             }
 
             for (String playerOut : playersOut)

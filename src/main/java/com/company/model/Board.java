@@ -119,7 +119,11 @@ public class Board {
     }
 
     public boolean canShot(int x, int y) {
-        return boardMatrix[y][x] == 0;
+        if (isInsideOfBoard(x, y)) {
+            return boardMatrix[y][x] == 0;
+        } else {
+            return false;
+        }
     }
 
     public boolean isInsideOfBoard(int x, int y) {
