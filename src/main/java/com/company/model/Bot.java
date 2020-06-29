@@ -5,14 +5,13 @@ import java.util.Random;
 //import static com.company.Application.directionsUse;
 
 public class Bot extends Player {
-    Player lastPlayerAttacked;      //Last player
-    Direction lastBoatHitDirection; //The direction the boat is going
-    boolean lastShotHit;            //Last shot hit? true = yes
-    boolean boatDestroyed;          //If there is a boat the bot is "working on"
-    int lastHitX, lastHitY;         //Last shot that hit, (x,y)
-    int lastShotX, lastShotY;       //Last shot, (x,y)
-    int firstBoatHitX, firstBoatHitY; //The first (x,y) that hit a boat, this so if the bot finds an end to a boat and the boat still is not destroyed it can go back and go the other way
-
+    Player lastPlayerAttacked;          //Last player
+    Direction lastBoatHitDirection;     //The direction the boat is going
+    boolean lastShotHit;                //Last shot hit? true = yes
+    boolean boatDestroyed;              //If there is a boat the bot is "working on"
+    int lastHitX, lastHitY;             //Last shot that hit, (x,y)
+    int lastShotX, lastShotY;           //Last shot, (x,y)
+    int firstBoatHitX, firstBoatHitY;   //The first (x,y) that hit a boat, this so if the bot finds an end to a boat and the boat still is not destroyed it can go back and go the other way
 
     public Bot(String name, Board personalBoard) {
         super(name, personalBoard);
@@ -53,10 +52,28 @@ public class Bot extends Player {
 
             if (lastShotHit && lastBoatHitDirection != null) {  // Hit, hit direction known | try the same direction
                 // Attack
-            } else if (lastShotHit && lastBoatHitDirection == null) {   // Hit, hit direction not known | shoot a random direction
+                int boatId = getAttackBoard(lastPlayerAttacked.getName()).getPlaceValue(lastShotX, lastShotY);
+
+                lastShotX += lastBoatHitDirection.getX();
+                lastShotY += lastBoatHitDirection.getY();
+
+                if (getAttackBoard(lastPlayerAttacked.getName()).canShot(lastShotX, lastShotY)) {   // Can shoot at the new location
+                    attack(lastShotX, lastShotY, boatId, lastPlayerAttacked);
+                } else {    // Shoot a diffrent direction
+                    lastBoatHitDirection = Direction.flipDirection(lastBoatHitDirection);
+
+                    lastShotX = firstBoatHitX + lastBoatHitDirection.getX();
+                    lastShotY = firstBoatHitY + lastBoatHitDirection.getY();
+
+                    attack(lastShotX, lastShotY, boatId, lastPlayerAttacked);
+                }
+            } else if (lastShotHit && lastBoatHitDirection == null) {   // Hit, hit direction not known | shoot a random direction | normaly after the first hit
                 // Attack
+
+
             } else if (lastShotHit == false && lastBoatHitDirection != null) {  // Miss, hit direction known | not shure what to do here... just attack random place?
                 // Attack
+
             } else if (lastShotHit == false && lastBoatHitDirection == null) {  // Miss, hit direction not known | attack in the opisit direction from the firstBoatHitX and firstBoatHitY (example: was up, now down)
                 // Attack
             }
@@ -156,5 +173,15 @@ public class Bot extends Player {
          */
 
         return false;
+    }
+
+    private void attack(int x, int y, int boatId, Player attackPlayer) {
+        lastShotHit = attackPlayer(lastPlayerAttacked, lastShotX, lastShotY);
+        boatDestroyed = boatDestroyed(lastShotX, lastShotY, boatId, lastPlayerAttacked);
+
+        if (boatDestroyed) {    // The boat is destroyed
+            lastPlayerAttacked = null;
+            lastBoatHitDirection = null;
+        }
     }
 }

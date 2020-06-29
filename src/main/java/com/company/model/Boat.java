@@ -15,10 +15,10 @@ public enum Boat {
         this.id = id;
     }
 
+    // Get
     public int getId() {
         return id;
     }
-
     public int getLength() {
         return length;
     }
