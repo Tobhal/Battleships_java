@@ -54,7 +54,9 @@ public class Bot extends Player {
         int boatId, x = 0, y = 0;
         Direction direction;
 
-        turnText.append(getName()).append(": ").append("\n\t");
+        boatDestroyed = false;
+
+        turnText.append(getName()).append(" (").append(getNumberOfBoatsAlive()).append(")").append(": ").append("\n\t");
 
         if (lastPlayerAttacked != null) { // Attack same player
             //System.out.println("Attacking " + lastPlayerAttacked.getName() + " again, because of hit last time");
@@ -76,8 +78,8 @@ public class Bot extends Player {
                 // Attack
                 boatId = getAttackBoard(lastPlayerAttacked.getName()).getPlaceValue(lastShotX, lastShotY);
 
-                x += lastBoatHitDirection.getX();   //TODO: See #2
-                y += lastBoatHitDirection.getY();   //TODO: See #2
+                x = lastShotX + lastBoatHitDirection.getX();   //TODO: See #2
+                y = lastShotY + lastBoatHitDirection.getY();   //TODO: See #2
 
                 if (getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y)) {   // Can shoot at the new location
                     attack(x, y, boatId, lastPlayerAttacked, lastBoatHitDirection);
@@ -204,7 +206,7 @@ public class Bot extends Player {
                 if (getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y)) {   // If can shoot
                     attack(x, y, boatId, lastPlayerAttacked, direction);
                 } else {    // Cant shoot, all directions are used up so there is a problem here...
-                    //TODO: Problem 3?
+                    //TODO: Problem 3? Have gotten this 1 time
                     turnText.append("\n").append("problem 3...");
                 }
 
@@ -249,6 +251,7 @@ public class Bot extends Player {
                 turnText.append("miss");
             }
         }
+
         System.out.println(turnText.toString());
         return false;
     }
@@ -257,7 +260,10 @@ public class Bot extends Player {
         lastShotHit = attackPlayer(attackPlayer, x, y);
         boatDestroyed = boatDestroyed(x, y, boatId, attackPlayer);
 
-        turnText.append("\n").append("X: ").append(x).append(" - Y:").append(y);
+        lastShotX = x;
+        lastShotY = y;
+
+        turnText.append("\n\t").append("X:").append(x).append(" - Y:").append(y).append(" - Dir: ").append(direction.toString());
 
         if (lastShotHit) {
             lastHitX = x;
@@ -265,13 +271,13 @@ public class Bot extends Player {
             lastBoatHitDirection = direction;
         }
 
+        turnText.append("\n").append(lastShotHit ? "Hit" : "Miss");
+
         if (boatDestroyed) {    // The boat is destroyed
             lastPlayerAttacked = null;
             lastBoatHitDirection = null;
 
             turnText.append("\n").append("Boat destroyed");
         }
-
-        turnText.append("\n").append(lastShotHit ? "Hit" : "Miss");
     }
 }

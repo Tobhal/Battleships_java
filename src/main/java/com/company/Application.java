@@ -147,6 +147,10 @@ public class Application {
                     attackPlayer(player);
                 }
 
+                if (player.getNumberOfBoatsAlive() <= 0) {
+                    playersOut.add(player.getName());
+                }
+
                 System.out.println("\n");
                 TimeUnit.SECONDS.sleep(1);
 
