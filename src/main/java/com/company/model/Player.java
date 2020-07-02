@@ -97,6 +97,7 @@ public class Player {
     }
 
     public boolean boatDestroyed(int x, int y, int id, Player player) {
+        //TODO: See if I need to know the boat ID or not.
         Boat boat = null;
         boolean running;
         int tempX, tempY;

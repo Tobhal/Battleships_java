@@ -127,7 +127,7 @@ public class Board {
     }
 
     public boolean isInsideOfBoard(int x, int y) {
-        return (y <= defaultY && y >= 0) || (x <= defaultX && x >= 0);
+        return (y < defaultY && y > 0) && (x < defaultX && x > 0);
     }
 
     //Print

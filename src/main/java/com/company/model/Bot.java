@@ -51,93 +51,158 @@ public class Bot extends Player {
         //TODO #2: Se if i can change some variables to temp variables
 
         turnText = new StringBuilder();
-        int boatId;
+        int boatId, x = 0, y = 0;
         Direction direction;
 
-        turnText.append(getName()).append(": ");
+        turnText.append(getName()).append(": ").append("\n\t");
 
         if (lastPlayerAttacked != null) { // Attack same player
             //System.out.println("Attacking " + lastPlayerAttacked.getName() + " again, because of hit last time");
             turnText.append("Attacking the same player: ").append(lastPlayerAttacked.getName()).append("\n\t");
 
             if (lastShotHit && lastBoatHitDirection != null) {  // Hit, hit direction known | try the same direction
-                turnText.append("Last was a hit, know hit direction");
+                /*  Case 1
+
+                    Take the known direction and add the x, y to lastHitX and lastHitY.
+                    Then se if that spot can be shot at.
+                        Yes: Shoot there
+                        No: Flip the direction.
+                            Add that direction to firstHitX and firstHitY (so now the attack is the other direction)
+                            Se if that spot can be attacked,
+                                For now just shoot there (later think of what to do)
+                 */
+                turnText.append("Case 1");
 
                 // Attack
                 boatId = getAttackBoard(lastPlayerAttacked.getName()).getPlaceValue(lastShotX, lastShotY);
 
-                lastShotX += lastBoatHitDirection.getX();   //TODO: See #2
-                lastShotY += lastBoatHitDirection.getY();   //TODO: See #2
+                x += lastBoatHitDirection.getX();   //TODO: See #2
+                y += lastBoatHitDirection.getY();   //TODO: See #2
 
-                if (getAttackBoard(lastPlayerAttacked.getName()).canShot(lastShotX, lastShotY)) {   // Can shoot at the new location
-                    attack(lastShotX, lastShotY, boatId, lastPlayerAttacked, lastBoatHitDirection);
+                if (getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y)) {   // Can shoot at the new location
+                    attack(x, y, boatId, lastPlayerAttacked, lastBoatHitDirection);
                 } else {    // Shoot a different direction
-                    turnText.append("\n\t").append("Trying a different direction");
+                    turnText.append("\n\t\t").append("Trying a different direction");
 
                     lastBoatHitDirection = Direction.flipDirection(lastBoatHitDirection);   //TODO: See #2
 
-                    lastShotX = firstBoatHitX + lastBoatHitDirection.getX();   //TODO: See #2
-                    lastShotY = firstBoatHitY + lastBoatHitDirection.getY();   //TODO: See #2
+                    x = firstBoatHitX + lastBoatHitDirection.getX();   //TODO: See #2
+                    y = firstBoatHitY + lastBoatHitDirection.getY();   //TODO: See #2
 
-                    attack(lastShotX, lastShotY, boatId, lastPlayerAttacked, lastBoatHitDirection);
-                }
-            } else if (lastShotHit && lastBoatHitDirection == null) {   // Hit, hit direction not known | shoot a random direction | normaly after the first hit
-                turnText.append("Last was a hit, don't know the direction");
-
-                // Attack
-                boatId = getAttackBoard(lastPlayerAttacked.getName()).getPlaceValue(lastShotX, lastShotY);
-
-                ArrayList<Direction> tempDirections = new ArrayList<>(getUseDirections());
-
-                direction = Direction.getRandomDirection(tempDirections);
-                tempDirections.remove(direction);
-
-                while (!getAttackBoard(lastPlayerAttacked.getName()).canShot(lastShotX += direction.getX(), lastShotY += direction.getY()) && tempDirections.size() > 0) {
-                    direction = Direction.getRandomDirection(tempDirections);
-                    tempDirections.remove(direction);
-                }
-
-                if (getAttackBoard(lastPlayerAttacked.getName()).canShot(lastShotX += direction.getX(), lastShotY += direction.getY())) {   // If can shoot
-                    attack(lastShotX += direction.getX(), lastShotY += direction.getY(), boatId, lastPlayerAttacked, direction);
-                } else {    // Cant shoot, all directions are used up so there is a problem here...
-                    //TODO: Problem 1?
-                    turnText.append("\n").append("problem 1...");
+                    attack(x, y, boatId, lastPlayerAttacked, lastBoatHitDirection);
                 }
             } else if (lastShotHit == false && lastBoatHitDirection != null) {  // Miss, hit direction known | Attack in the opisit direction from lastHitDirection
-                turnText.append("Last was a miss, know the direction...");
+                /*  Case 2
+
+                    The last shot was a miss, but i know the location.
+                    This means that Case 1 has happened, and I am at 1 end of the boat.
+                    I then need to go back to the start of where i hit the boat, flip direction and attack from there.
+
+                    Flip the direction
+                    Set X, Y to firstHitX and firstHitY += x y form direction.
+                    Se if i can attack there
+                        Yes: Attack
+                        No: For now shoot there, but later I need to try to find out what to do.
+                            The same problem as case 1
+                 */
+                turnText.append("Case 2.");
 
                 boatId = getAttackBoard(lastPlayerAttacked.getName()).getPlaceValue(firstBoatHitX, firstBoatHitY);
 
                 // Attack
                 direction = Direction.flipDirection(lastBoatHitDirection);
 
-                lastShotX = firstBoatHitX += direction.getX();
-                lastShotY = firstBoatHitY += direction.getY();
+                x = firstBoatHitX += direction.getX();
+                y = firstBoatHitY += direction.getY();
 
-                if (getAttackBoard(lastPlayerAttacked.getName()).canShot(lastShotX, lastShotY)) {   // Can shoot there
-                    attack(lastShotX, lastShotY, boatId, lastPlayerAttacked, direction);
+                if (getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y)) {   // Can shoot there
+                    attack(x, y, boatId, lastPlayerAttacked, direction);
                 } else {    // Cant shoot there
                     turnText.append("Problem 2...");
                     return false;   //
                 }
 
-            } else if (lastShotHit == false && lastBoatHitDirection == null) {  // Miss, hit direction not known | attack in the opisit direction from the firstBoatHitX and firstBoatHitY (example: was up, now down)
-                turnText.append("Last was a miss, don't know the direction");
+            } else if (lastShotHit && lastBoatHitDirection == null) {   // Hit, hit direction not known | shoot a random direction | normaly after the first hit
+                /*  Case 3
+
+                    Because I do not know the direction the boat is going, I need to try a "random" direction.
+
+                    Make a temp list of all directions in use.
+                    Take a random direction from that list.
+                        Can I shoot there?
+                            Yes: Attack there.
+                            No: Remove that direction from the list and try a different direction
+
+                        If no direction is found there is a bug somewhere?
+                 */
+                turnText.append("Case 3");
+
+                // Attack
+                boatId = getAttackBoard(lastPlayerAttacked.getName()).getPlaceValue(lastShotX, lastShotY);
+
+                ArrayList<Direction> tempDirections = new ArrayList<>(getUseDirections());
+
+                direction = Direction.getRandomDirection(tempDirections);
+
+                x = lastShotX + direction.getX();
+                y = lastShotY + direction.getY();
+
+                tempDirections.remove(direction);
+
+                while (!getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y) && tempDirections.size() > 0) {
+                    direction = Direction.getRandomDirection(tempDirections);
+
+                    x = lastShotX + direction.getX();
+                    y = lastShotY + direction.getY();
+
+                    tempDirections.remove(direction);
+                }
+
+                if (getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y)) {   // If can shoot
+                    attack(x, y, boatId, lastPlayerAttacked, direction);
+                } else {    // Cant shoot, all directions are used up so there is a problem here...
+                    //TODO: Problem 1?
+                    turnText.append("\n").append("problem 1...");
+                }
+            }  else if (lastShotHit == false && lastBoatHitDirection == null) {  // Miss, hit direction not known | attack in the opisit direction from the firstBoatHitX and firstBoatHitY (example: was up, now down)
+                /*  Case 4
+
+                    I miss and do not know the location.
+                    This means that case 3 happened and i am trying to find the correct direction of the boat.
+                    I need to do most of the same as case 2, but i need to use lastHitX and lastHitY and not lastShotX and lastShotY
+
+                    Make a list of all directions in use.
+                    Pick a random one.
+                    See if I can shoot there.
+                        Yes: Attack
+                        No: Remove that from the list and try a different direction.
+
+                        If no direction is found there is a bug somewhere...
+                 */
+                turnText.append("Case 4");
 
                 boatId = getAttackBoard(lastPlayerAttacked.getName()).getPlaceValue(firstBoatHitX, firstBoatHitY);
                 // Attack
                 ArrayList<Direction> tempDirections = new ArrayList<>(getUseDirections());
 
                 direction = Direction.getRandomDirection(tempDirections);
+
+                x = lastHitX + direction.getX();
+                y = lastHitY + direction.getY();
+
                 tempDirections.remove(direction);
 
-                while (!getAttackBoard(lastPlayerAttacked.getName()).canShot(lastHitX += direction.getX(), lastHitY += direction.getY()) && tempDirections.size() > 0) {
+                while (!getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y) && tempDirections.size() > 0) {
                     direction = Direction.getRandomDirection(tempDirections);
+
+                    x = lastHitX + direction.getX();
+                    y = lastHitY + direction.getY();
+
                     tempDirections.remove(direction);
                 }
 
-                if (getAttackBoard(lastPlayerAttacked.getName()).canShot(lastHitX += direction.getX(), lastHitY += direction.getY())) {   // If can shoot
-                    attack(lastShotX += direction.getX(), lastHitY += direction.getY(), boatId, lastPlayerAttacked, direction);
+                if (getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y)) {   // If can shoot
+                    attack(x, y, boatId, lastPlayerAttacked, direction);
                 } else {    // Cant shoot, all directions are used up so there is a problem here...
                     //TODO: Problem 3?
                     turnText.append("\n").append("problem 3...");
@@ -149,47 +214,6 @@ public class Bot extends Player {
             }
 
 
-            /*
-            if (lastShotHit) { // Last shot was a hit
-                if (lastBoatHitDirection != null) { // Attack in same direction
-                    lastShotX += lastBoatHitDirection.getX();
-                    lastShotY += lastBoatHitDirection.getY();
-
-                    if (getAttackBoard(lastPlayerAttacked.getName()).canShot(lastShotX, lastShotY)) { // If the place can be shot at
-                        if (lastPlayerAttacked.getBoard().attacked(lastShotX, lastShotY)) { // If the shot is a hit
-                            boatDestroyed = attackPlayer(lastPlayerAttacked, lastShotX, lastShotY); //True if hit
-                            lastShotHit = true;
-                        } else { // If the shot is a miss
-                            lastShotHit = false;
-                        }
-                    } else { // Can´t shoot there
-                        if (getAttackBoard(lastPlayerAttacked.getName()).isInsideOfBoard(lastShotX, lastShotY)) { // The shot is inside of the board
-
-                        } else { // The shot is outside of the board
-
-                        }
-                    }
-
-
-
-
-
-
-                } else { // Attack in a different location
-
-
-
-                }
-
-
-            } else {    // Miss
-
-
-
-            }
-            */
-
-
         } else { // Attack a random player
             //TODO: Make to use private function attack(){}, maybe
             turnText.append("Attacking a random player: ");
@@ -198,8 +222,8 @@ public class Bot extends Player {
 
             turnText.append(lastPlayerAttacked.getName()).append(" -> ");
 
-            int x = new Random().nextInt(Board.getDefaultX());   //TODO: See #2
-            int y = new Random().nextInt(Board.getDefaultY());   //TODO: See #2
+            x = new Random().nextInt(Board.getDefaultX());   //TODO: See #2
+            y = new Random().nextInt(Board.getDefaultY());   //TODO: See #2
 
             while (!getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y)) {   // If x and y wil be at a already shot at place, try again
                 x = new Random().nextInt(Board.getDefaultX());   //TODO: See #2
@@ -225,40 +249,15 @@ public class Bot extends Player {
                 turnText.append("miss");
             }
         }
-
-        /*
-        se if the last shot was a hit, miss or destroyed.
-            if it was a miss
-                shoot at a random place.
-
-            if it was destroyed
-                shoot at a random place.
-
-            if it was a hit
-                shot in a direction (up, down, left, right), that is not shot at before
-                    if that is a hit save the direction and where it was hit
-
-                if no directions are possible to shoot at, go back to lastBoatHit (X and Y), and try form there
-                    if that hit save the direction and where it was hit
-
-
-
-
-                se if that location is already shot at or not.
-                    if it is shot at, pick another direction.
-                        if there is no
-         */
-
-
-
         System.out.println(turnText.toString());
-
         return false;
     }
 
     private void attack(int x, int y, int boatId, Player attackPlayer, Direction direction) {
         lastShotHit = attackPlayer(attackPlayer, x, y);
         boatDestroyed = boatDestroyed(x, y, boatId, attackPlayer);
+
+        turnText.append("\n").append("X: ").append(x).append(" - Y:").append(y);
 
         if (lastShotHit) {
             lastHitX = x;
