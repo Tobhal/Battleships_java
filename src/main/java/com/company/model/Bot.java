@@ -164,7 +164,8 @@ public class Bot extends Player {
                     attack(x, y, boatId, lastPlayerAttacked, direction);
                 } else {    // Cant shoot, all directions are used up so there is a problem here...
                     //TODO: Problem 1?
-                    turnText.append("\n").append("problem 1...");
+                    //turnText.append("\n").append("problem 1...");
+                    attack(x, y, boatId, lastPlayerAttacked, direction);
                 }
             }  else if (lastShotHit == false && lastBoatHitDirection == null) {  // Miss, hit direction not known | attack in the opisit direction from the firstBoatHitX and firstBoatHitY (example: was up, now down)
                 /*  Case 4
@@ -259,6 +260,8 @@ public class Bot extends Player {
     private void attack(int x, int y, int boatId, Player attackPlayer, Direction direction) {
         lastShotHit = attackPlayer(attackPlayer, x, y);
         boatDestroyed = boatDestroyed(x, y, boatId, attackPlayer);
+
+        turnText.append("\n\t").append(Boat.idToBoat(boatId - 10));
 
         lastShotX = x;
         lastShotY = y;

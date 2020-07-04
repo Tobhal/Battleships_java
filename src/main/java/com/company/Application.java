@@ -11,7 +11,7 @@ public class Application {
 
     public static Scanner sc = new Scanner(System.in);
     public static boolean running = true;
-    public static int x = 0, y = 0, bots = 0;
+    public static int x = 0, y = 0, bots = 0, rounds = 0;
 
     public static HashMap<String, Player> players = new HashMap<>();
     public static ArrayList<Boat> boatsToPlace = new ArrayList<>();
@@ -47,6 +47,14 @@ public class Application {
 
         //Add players
         System.out.println("Add player");
+
+        /*
+        addBot();
+        addBot();
+        addBot();
+        addBot();
+        addBot();
+        */
 
         while (running) {
             System.out.print("add player or move on (1/2/3(bot)): ");
@@ -152,15 +160,19 @@ public class Application {
                 }
 
                 System.out.println("\n");
-                TimeUnit.SECONDS.sleep(1);
+                //TimeUnit.SECONDS.sleep(1);
 
             }
+
+            rounds++;
 
             for (String playerOut : playersOut)
                 players.remove(playerOut);
         }
 
         //End
+
+        System.out.println("\n\n" + rounds);
         sc.close();
     }
 
