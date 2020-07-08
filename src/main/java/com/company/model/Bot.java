@@ -107,8 +107,25 @@ public class Bot extends Player {
                         No: For now shoot there, but later I need to try to find out what to do.
                             The same problem as case 1
                  */
-                turnText.append("Case 2.");
+                turnText.append("Case 2");
 
+                turnText.append("\n\t").append(firstBoatHitX).append("-").append(firstBoatHitY);
+
+                /*
+                if (firstBoatHitX < 0)
+                    firstBoatHitX++;
+                if (firstBoatHitX > 10)
+                    firstBoatHitX--;
+
+                if (firstBoatHitY < 0)
+                    firstBoatHitY++;
+                if (firstBoatHitY > 10)
+                    firstBoatHitY--;
+                */
+
+                if (firstBoatHitX < 0 || firstBoatHitX > 9 || firstBoatHitY < 0 || firstBoatHitY > 9)
+                    System.out.println("*** " + getName() + "\n\t X = " + firstBoatHitX + " - Y = " + firstBoatHitY);
+                //TODO: There is a out of bounds exeption here, firstBoatHitX and firstBoatHitY. One of them can be -1 or 10. Figure out how that happens...
                 boatId = getAttackBoard(lastPlayerAttacked.getName()).getPlaceValue(firstBoatHitX, firstBoatHitY);
 
                 // Attack
@@ -209,6 +226,7 @@ public class Bot extends Player {
                 } else {    // Cant shoot, all directions are used up so there is a problem here...
                     //TODO: Problem 3? Have gotten this 1 time
                     turnText.append("\n").append("problem 3...");
+                    attack(x, y, boatId, lastPlayerAttacked, direction);    // This do not work!
                 }
 
 
@@ -228,7 +246,7 @@ public class Bot extends Player {
             x = new Random().nextInt(Board.getDefaultX());   //TODO: See #2
             y = new Random().nextInt(Board.getDefaultY());   //TODO: See #2
 
-            while (!getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y)) {   // If x and y wil be at a already shot at place, try again
+            while (!getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y) && !Board.isInsideOfBoard(x, y)) {   // If x and y wil be at a already shot at place, try again
                 x = new Random().nextInt(Board.getDefaultX());   //TODO: See #2
                 y = new Random().nextInt(Board.getDefaultY());   //TODO: See #2
             }
@@ -236,12 +254,28 @@ public class Bot extends Player {
             lastShotX = x;   //TODO: See #2
             lastShotY = y;   //TODO: See #2
 
+            System.out.println("**********");
+            System.out.println("**********");
+            System.out.println("**********");
+            System.out.println("**********");
+            System.out.println(getName());
+            System.out.println(lastShotX);
+            System.out.println(lastShotY);
+            System.out.println("**********");
+            System.out.println("**********");
+            System.out.println("**********");
+            System.out.println("**********");
+
+            turnText.append("\n\t").append(x).append(" - ").append(y).append("\n");
+
             if (attackPlayer(lastPlayerAttacked, x, y)) {   // If the shot was a hit, store that
                 lastShotHit = true;
                 lastHitX = x;
                 lastHitY = y;
                 firstBoatHitX = x;
                 firstBoatHitY = y;
+                lastBoatHitDirection = null;
+
 
                 turnText.append("hit");
                 //System.out.println(getName() + "attacked " + lastPlayerAttacked.getName() + "the shot was a hit at " + x + ", " + y);
@@ -261,7 +295,7 @@ public class Bot extends Player {
         lastShotHit = attackPlayer(attackPlayer, x, y);
         boatDestroyed = boatDestroyed(x, y, boatId, attackPlayer);
 
-        turnText.append("\n\t").append(Boat.idToBoat(boatId - 10));
+        turnText.append("\n\t").append(Boat.idToBoat(boatId));
 
         lastShotX = x;
         lastShotY = y;

@@ -23,7 +23,7 @@ public class Application {
         System.out.println("Application - test game");
 
         //Game setup
-        Board.setDefaultSize(10);
+        //Board.setDefaultSize(10);
 
         boatsToPlace.add(Boat.CARRIER);
         boatsToPlace.add(Boat.BATTLESHIP);
@@ -48,14 +48,11 @@ public class Application {
         //Add players
         System.out.println("Add player");
 
-        /*
-        addBot();
-        addBot();
-        addBot();
-        addBot();
-        addBot();
-        */
 
+        addBot();
+        addBot();
+
+        /*
         while (running) {
             System.out.print("add player or move on (1/2/3(bot)): ");
             switch (sc.next()) {
@@ -73,6 +70,8 @@ public class Application {
                     break;
             }
         }
+
+         */
         /*
         System.out.println("Petter \nArne \n");
         players.put("petter", new Player("Petter", new Board()));
@@ -160,11 +159,12 @@ public class Application {
                 }
 
                 System.out.println("\n");
-                //TimeUnit.SECONDS.sleep(1);
+                TimeUnit.MILLISECONDS.sleep(10);
 
             }
 
             rounds++;
+            System.out.println(rounds + "\n");
 
             for (String playerOut : playersOut)
                 players.remove(playerOut);

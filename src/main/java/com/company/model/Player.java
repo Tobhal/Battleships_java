@@ -98,20 +98,10 @@ public class Player {
 
     public boolean boatDestroyed(int x, int y, int id, Player player) {
         //TODO: See if I need to know the boat ID or not.
-        Boat boat = null;
+        Boat boat = Boat.idToBoat(id);
         boolean running;
         int tempX, tempY;
         int hit = 0;
-
-        for (Boat boat1 : Boat.values()) {
-            if (boat1.getId() == id) {
-                boat = boat1;
-                break;
-            } else if (boat1.getId() == id - 10) {
-                boat = boat1;
-                break;
-            }
-        }
 
         if (boat == null)   // Exit if there is no boat
             return false;

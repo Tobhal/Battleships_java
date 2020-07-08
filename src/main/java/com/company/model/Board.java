@@ -17,8 +17,6 @@
 
 package com.company.model;
 
-import java.util.ArrayList;
-
 public class Board {
     private int[][] boardMatrix;
     private static int defaultX = 10;
@@ -126,7 +124,7 @@ public class Board {
         }
     }
 
-    public boolean isInsideOfBoard(int x, int y) {
+    public static boolean isInsideOfBoard(int x, int y) {
         return (y < defaultY && y > 0) && (x < defaultX && x > 0);
     }
 
