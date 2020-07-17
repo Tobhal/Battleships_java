@@ -4,7 +4,7 @@ A battleships style game, just with support for more than 2 players.
 # TODO
 - [X] All functions to play a full game
 - [X] 8 Directions
-- [ ] Extra functions so the game dont chrash if something is done wrong
+- [X] Extra functions so the game dont chrash if something is done wrong
 - [ ] Frontend:
   - [ ] Local host
   - [ ] Local server
@@ -15,4 +15,4 @@ A battleships style game, just with support for more than 2 players.
     - [ ] Named
     - [ ] Radndom
   - [ ] Change all settings per lobby
-- [ ] Add bots
+- [X] Add bots
