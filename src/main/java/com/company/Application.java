@@ -48,6 +48,13 @@ public class Application {
         //Add players
         System.out.println("Add player");
 
+        addBot();
+        addBot();
+        addBot();
+        addBot();
+        addBot();
+
+        /*
         while (running) {
             System.out.print("add player or move on (1/2/3(bot)): ");
             switch (sc.next()) {
@@ -65,6 +72,7 @@ public class Application {
                     break;
             }
         }
+        */
         /*
         System.out.println("Petter \nArne \n");
         players.put("petter", new Player("Petter", new Board()));
@@ -98,7 +106,7 @@ public class Application {
                     placeBoat(player, boat);
                 }
             }
-
+            
             player.getBoard().print();
         }
 
@@ -152,7 +160,7 @@ public class Application {
                 }
 
                 System.out.println("\n");
-                TimeUnit.SECONDS.sleep(1);
+                //TimeUnit.SECONDS.sleep(1);
 
             }
 

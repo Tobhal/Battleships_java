@@ -114,14 +114,14 @@ public class Bot extends Player {
                 // Attack
                 direction = Direction.flipDirection(lastBoatHitDirection);
 
-                x = firstBoatHitX += direction.getX();
-                y = firstBoatHitY += direction.getY();
+                x = firstBoatHitX + direction.getX();
+                y = firstBoatHitY + direction.getY();
 
                 if (getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y)) {   // Can shoot there
                     attack(x, y, boatId, lastPlayerAttacked, direction);
                 } else {    // Cant shoot there
                     turnText.append("Problem 2...");
-                    return false;   //
+                    return false;
                 }
 
             } else if (lastShotHit && lastBoatHitDirection == null) {   // Hit, hit direction not known | shoot a random direction | normaly after the first hit
