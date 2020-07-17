@@ -1,4 +1,8 @@
-package com.company.model;
+package com.company.model.game.player;
+
+import com.company.model.game.Board;
+import com.company.model.game.BoatTpes;
+import com.company.model.game.Direction;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -24,7 +28,7 @@ public class Bot extends Player {
         return lastPlayerAttacked;
     }
 
-    public void placeBoat(Boat boat) {
+    public void placeBoat(BoatTpes boatTpes) {
         setNumberOfBoatsAlive(getNumberOfBoatsAlive() + 1);
 
         int x = 0, y = 0;
@@ -37,13 +41,13 @@ public class Bot extends Player {
             y = new Random().nextInt(Board.getDefaultY());
             direction = Direction.getRandomDirection(getUseDirections());
 
-            if (getBoard().boatIsInsideBoard(x, y, boat, direction)) {  // if boat is inside of the board
-                if (!getBoard().boatsOverlap(x, y, boat, direction)) {   // if boat does not overlap another boat
+            if (getBoard().boatIsInsideBoard(x, y, boatTpes, direction)) {  // if boat is inside of the board
+                if (!getBoard().boatsOverlap(x, y, boatTpes, direction)) {   // if boat does not overlap another boat
                     running = false;
                 }
             }
         }
-        getBoard().setBoat(x, y, boat, direction);
+        getBoard().setBoat(x, y, boatTpes, direction);
     }
 
     public boolean attackPlayer(ArrayList<Player> players) {

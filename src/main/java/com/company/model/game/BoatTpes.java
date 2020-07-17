@@ -1,6 +1,6 @@
-package com.company.model;
+package com.company.model.game;
 
-public enum Boat {
+public enum BoatTpes {
     CARRIER(5, 10),
     BATTLESHIP(4, 11),
     CRUISER(3 ,12),
@@ -10,7 +10,7 @@ public enum Boat {
     private final int length;
     private final int id;
 
-    Boat(int length, int id) {
+    BoatTpes(int length, int id) {
         this.length = length;
         this.id = id;
     }
@@ -24,7 +24,7 @@ public enum Boat {
     }
 
     // Other
-    public static Boat idToBoat(int id) {
+    public static BoatTpes idToBoat(int id) {
         switch (id) {
             case 10: case 20: return CARRIER;
             case 11: case 21: return BATTLESHIP;

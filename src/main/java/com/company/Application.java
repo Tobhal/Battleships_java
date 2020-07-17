@@ -1,11 +1,12 @@
 package com.company;
 
-import com.company.model.*;
+import com.company.model.game.*;
+import com.company.model.game.player.Bot;
+import com.company.model.game.player.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class Application {
 
@@ -14,7 +15,7 @@ public class Application {
     public static int x = 0, y = 0, bots = 0;
 
     public static HashMap<String, Player> players = new HashMap<>();
-    public static ArrayList<Boat> boatsToPlace = new ArrayList<>();
+    public static ArrayList<BoatTpes> boatsToPlace = new ArrayList<>();
 
     public static ArrayList<String> playersOut = new ArrayList<>();
     public static ArrayList<Direction> directionsUse = new ArrayList<>();
@@ -25,11 +26,11 @@ public class Application {
         //Game setup
         Board.setDefaultSize(10);
 
-        boatsToPlace.add(Boat.CARRIER);
-        boatsToPlace.add(Boat.BATTLESHIP);
-        boatsToPlace.add(Boat.CRUISER);
-        boatsToPlace.add(Boat.SUBMARINE);
-        boatsToPlace.add(Boat.DESTROYER);
+        boatsToPlace.add(BoatTpes.CARRIER);
+        boatsToPlace.add(BoatTpes.BATTLESHIP);
+        boatsToPlace.add(BoatTpes.CRUISER);
+        boatsToPlace.add(BoatTpes.SUBMARINE);
+        boatsToPlace.add(BoatTpes.DESTROYER);
 
         directionsUse.add(Direction.UP);
         directionsUse.add(Direction.DOWN);
@@ -47,12 +48,6 @@ public class Application {
 
         //Add players
         System.out.println("Add player");
-
-        addBot();
-        addBot();
-        addBot();
-        addBot();
-        addBot();
 
         addBot();
         addBot();
@@ -99,17 +94,17 @@ public class Application {
             if (player instanceof Bot) {
                 System.out.println(player.getName() + " placed his boats");
 
-                for (Boat boat : boatsToPlace) {
+                for (BoatTpes boatTpes : boatsToPlace) {
                     Bot bot = (Bot)player;
 
-                    bot.placeBoat(boat);
+                    bot.placeBoat(boatTpes);
                 }
             } else {
                 System.out.println("\n\n\n");
                 System.out.println(player.getName() + " place your boat" + (boatsToPlace.size() == 1 ? ":" : "s:"));
 
-                for (Boat boat : boatsToPlace) {
-                    placeBoat(player, boat);
+                for (BoatTpes boatTpes : boatsToPlace) {
+                    placeBoat(player, boatTpes);
                 }
             }
             
@@ -198,10 +193,10 @@ public class Application {
         players.put(botName, new Bot(botName, new Board()));
     }
 
-    public static void placeBoat(Player player, Boat boat) {
+    public static void placeBoat(Player player, BoatTpes boatTpes) {
         player.getBoard().print();
 
-        System.out.println(boat.name() + "(" + boat.getLength() + ")");
+        System.out.println(boatTpes.name() + "(" + boatTpes.getLength() + ")");
 
         x = -1;
         y = -1;
@@ -220,14 +215,14 @@ public class Application {
         Direction direction = Direction.valueOf(sc.next().toUpperCase());   //TODO: #1
         System.out.println("-----");
 
-        if (player.getBoard().boatsOverlap(x, y, boat, direction)) {
+        if (player.getBoard().boatsOverlap(x, y, boatTpes, direction)) {
             System.out.println("Boat overlaps another boat. Try again!");
-            placeBoat(player, boat);
-        } else if (player.getBoard().boatIsInsideBoard(x, y, boat, direction)) {
-            player.placeBoat(x, y, boat, direction);
+            placeBoat(player, boatTpes);
+        } else if (player.getBoard().boatIsInsideBoard(x, y, boatTpes, direction)) {
+            player.placeBoat(x, y, boatTpes, direction);
         } else {
             System.out.println("\nThe boat wil be outside of the board.\nPleace try again, and do not place the boat outside of the board\n");
-            placeBoat(player, boat);
+            placeBoat(player, boatTpes);
         }
     }
 

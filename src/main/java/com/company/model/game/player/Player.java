@@ -1,4 +1,8 @@
-package com.company.model;
+package com.company.model.game.player;
+
+import com.company.model.game.Board;
+import com.company.model.game.BoatTpes;
+import com.company.model.game.Direction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +16,9 @@ public class Player {
     private static ArrayList<Player> availeblePlayers = new ArrayList<>();
     private static ArrayList<Direction> useDirections = new ArrayList<>();
 
+    public Player(String name) {
+        this.name = name;
+    }
     public Player(String name, Board personalBoard) {
         this.name = name;
         this.personalBoard = personalBoard;
@@ -80,12 +87,12 @@ public class Player {
         }
     }
 
-    public void placeBoat(int x, int y, Boat boat, Direction direction) {
+    public void placeBoat(int x, int y, BoatTpes boatTpes, Direction direction) {
         numberOfBoatsAlive += 1;
 
-        if (personalBoard.boatIsInsideBoard(x, y, boat, direction) && !personalBoard.boatsOverlap(x, y, boat, direction)) {
-            for (int i = 0; i < boat.getLength(); i++) {
-                personalBoard.setPlace(x,y,boat.getId());
+        if (personalBoard.boatIsInsideBoard(x, y, boatTpes, direction) && !personalBoard.boatsOverlap(x, y, boatTpes, direction)) {
+            for (int i = 0; i < boatTpes.getLength(); i++) {
+                personalBoard.setPlace(x,y, boatTpes.getId());
                 x += direction.getX();
                 y += direction.getY();
             }
@@ -98,12 +105,12 @@ public class Player {
 
     public boolean boatDestroyed(int x, int y, int id, Player player) {
         //TODO: See if I need to know the boat ID or not.
-        Boat boat = Boat.idToBoat(id);
+        BoatTpes boatTpes = BoatTpes.idToBoat(id);
         boolean running;
         int tempX, tempY;
         int hit = 0;
 
-        if (boat == null)   // Exit if there is no boat
+        if (boatTpes == null)   // Exit if there is no boat
             return false;
 
         for (Direction direction : useDirections) {
@@ -111,7 +118,7 @@ public class Player {
             tempY = y + direction.getY();
             running = true;
             while (running) {
-                if (hit >= boat.getLength() - 1) {   // If the boat is destroyed
+                if (hit >= boatTpes.getLength() - 1) {   // If the boat is destroyed
                     player.removeBoat(1);
                     return true;
                 } else if (tempX < 0 || tempY < 0 || tempX > Board.getDefaultX() - 1 || tempY > Board.getDefaultY() - 1) {    // If checking outside of the board    // TODO: change default size to somehing that is better. Test length of x and y and not use default size.
@@ -120,7 +127,7 @@ public class Player {
                     running = false;
                 } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == 1) {    // if the place is 1 (Already hit place)
                     running = false;
-                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == boat.getId() + 10) {    // If the place is the same hit boat
+                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == boatTpes.getId() + 10) {    // If the place is the same hit boat
                     hit++;
                     tempX += direction.getX();
                     tempY += direction.getY();

@@ -15,7 +15,7 @@
 24 - Destroyed Destroyer
  */
 
-package com.company.model;
+package com.company.model.game;
 
 public class Board {
     private int[][] boardMatrix;
@@ -44,9 +44,9 @@ public class Board {
     public void setPlace(int x, int y, int value) {
         this.boardMatrix[y][x] = value;
     }
-    public void setBoat(int x, int y, Boat boat, Direction direction) {   // TODO: Add some error handling, trow error if boat is outside board...
-        for (int i = 0; i < boat.getLength(); i++) {
-            setPlace(x, y, boat.getId());
+    public void setBoat(int x, int y, BoatTpes boatTpes, Direction direction) {   // TODO: Add some error handling, trow error if boat is outside board...
+        for (int i = 0; i < boatTpes.getLength(); i++) {
+            setPlace(x, y, boatTpes.getId());
             x += direction.getX();
             y += direction.getY();
         }
@@ -93,9 +93,9 @@ public class Board {
         }
     }
 
-    public boolean boatIsInsideBoard(int x, int y, Boat boat, Direction direction) {
-        int boatEndX = x + (boat.getLength() * direction.getX());
-        int boatEndY = y + (boat.getLength() * direction.getY());
+    public boolean boatIsInsideBoard(int x, int y, BoatTpes boatTpes, Direction direction) {
+        int boatEndX = x + (boatTpes.getLength() * direction.getX());
+        int boatEndY = y + (boatTpes.getLength() * direction.getY());
 
         if (boatEndX < 0 || boatEndX > Board.getDefaultX() || boatEndY < 0 || boatEndY > Board.getDefaultY()) {
             return false;
@@ -104,8 +104,8 @@ public class Board {
         }
     }
 
-    public boolean boatsOverlap(int x, int y, Boat boat, Direction direction) {
-        for (int i = 0; i < boat.getLength(); i++) {
+    public boolean boatsOverlap(int x, int y, BoatTpes boatTpes, Direction direction) {
+        for (int i = 0; i < boatTpes.getLength(); i++) {
             if (boardMatrix[y][x] == 0) {        //Has not hit something
                 x += direction.getX();
                 y += direction.getY();
