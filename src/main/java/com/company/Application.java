@@ -54,6 +54,12 @@ public class Application {
         addBot();
         addBot();
 
+        addBot();
+        addBot();
+        addBot();
+        addBot();
+        addBot();
+
         /*
         while (running) {
             System.out.print("add player or move on (1/2/3(bot)): ");

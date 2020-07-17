@@ -208,6 +208,24 @@ public class Bot extends Player {
                 } else {    // Cant shoot, all directions are used up so there is a problem here...
                     //TODO: Problem 3? Have gotten this 1 time
                     turnText.append("\n").append("problem 3...");
+
+                    direction = Direction.getRandomDirection(tempDirections);
+
+                    x = lastHitX + direction.getX();
+                    y = lastHitY + direction.getY();
+
+                    tempDirections.remove(direction);
+
+                    while (!getAttackBoard(lastPlayerAttacked.getName()).canShot(x, y) && tempDirections.size() > 0) {
+                        direction = Direction.getRandomDirection(tempDirections);
+
+                        x = lastHitX + direction.getX();
+                        y = lastHitY + direction.getY();
+
+                        tempDirections.remove(direction);
+                    }
+
+                    attack(x, y, boatId, lastPlayerAttacked, direction);
                 }
 
 
