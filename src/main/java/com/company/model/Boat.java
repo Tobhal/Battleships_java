@@ -22,4 +22,16 @@ public enum Boat {
     public int getLength() {
         return length;
     }
+
+    // Other
+    public static Boat idToBoat(int id) {
+        switch (id) {
+            case 10: case 20: return CARRIER;
+            case 11: case 21: return BATTLESHIP;
+            case 12: case 22: return CRUISER;
+            case 13: case 23: return SUBMARINE;
+            case 14: case 24: return DESTROYER;
+            default: return null;
+        }
+    }
 }
