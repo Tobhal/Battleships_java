@@ -1,5 +1,7 @@
 package com.company.model.game;
 
+import java.util.Objects;
+
 public class Coordinate {
     private int x;
     private int y;
@@ -23,5 +25,20 @@ public class Coordinate {
     }
     public void setY(int y) {
         this.y = y;
+    }
+
+    // Other
+
+    @Override
+    public String toString() {
+        return "Coordinate{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (this.x == ((Coordinate) o).getX()) && (this.y == ((Coordinate) o).getY());
     }
 }

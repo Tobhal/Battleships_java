@@ -1,14 +1,15 @@
 package com.company.model.game.player;
 
-import com.company.model.game.Board;
-import com.company.model.game.BoatTpes;
+import com.company.model.game.BoatType;
 import com.company.model.game.Direction;
 
 import java.util.ArrayList;
 import java.util.Random;
 //import static com.company.Application.directionsUse;
 
+/*
 public class Bot extends Player {
+
     Player lastPlayerAttacked;          //Last player
     Direction lastBoatHitDirection;     //The direction the boat is going
     boolean lastShotHit;                //Last shot hit? true = yes
@@ -28,7 +29,7 @@ public class Bot extends Player {
         return lastPlayerAttacked;
     }
 
-    public void placeBoat(BoatTpes boatTpes) {
+    public void placeBoat(BoatType boatType) {
         setNumberOfBoatsAlive(getNumberOfBoatsAlive() + 1);
 
         int x = 0, y = 0;
@@ -41,15 +42,15 @@ public class Bot extends Player {
             y = new Random().nextInt(Board.getDefaultY());
             direction = Direction.getRandomDirection(getUseDirections());
 
-            if (getBoard().boatIsInsideBoard(x, y, boatTpes, direction)) {  // if boat is inside of the board
-                if (!getBoard().boatsOverlap(x, y, boatTpes, direction)) {   // if boat does not overlap another boat
+            if (getBoard().boatIsInsideBoard(x, y, boatType, direction)) {  // if boat is inside of the board
+                if (!getBoard().boatsOverlap(x, y, boatType, direction)) {   // if boat does not overlap another boat
                     running = false;
                 }
             }
         }
-        getBoard().setBoat(x, y, boatTpes, direction);
+        getBoard().setBoat(x, y, boatType, direction);
     }
-
+/*
     public boolean attackPlayer(ArrayList<Player> players) {
         //TODO #1: Make bot attack a player.
         //TODO #2: Se if i can change some variables to temp variables
@@ -77,6 +78,7 @@ public class Bot extends Player {
                             Se if that spot can be attacked,
                                 For now just shoot there (later think of what to do)
                  */
+/*
                 turnText.append("Case 1");
 
                 // Attack
@@ -111,6 +113,7 @@ public class Bot extends Player {
                         No: For now shoot there, but later I need to try to find out what to do.
                             The same problem as case 1
                  */
+/*
                 turnText.append("Case 2.");
 
                 boatId = getAttackBoard(lastPlayerAttacked.getName()).getPlaceValue(firstBoatHitX, firstBoatHitY);
@@ -141,6 +144,7 @@ public class Bot extends Player {
 
                         If no direction is found there is a bug somewhere?
                  */
+/*
                 turnText.append("Case 3");
 
                 // Attack
@@ -185,6 +189,7 @@ public class Bot extends Player {
 
                         If no direction is found there is a bug somewhere...
                  */
+/*
                 turnText.append("Case 4");
 
                 boatId = getAttackBoard(lastPlayerAttacked.getName()).getPlaceValue(firstBoatHitX, firstBoatHitY);
@@ -302,4 +307,6 @@ public class Bot extends Player {
             turnText.append("\n").append("Boat destroyed");
         }
     }
+
 }
+*/

@@ -1,155 +1,102 @@
 package com.company.model.game.player;
 
-import com.company.model.game.Board;
-import com.company.model.game.BoatTpes;
+import com.company.model.game.Boat;
+import com.company.model.game.BoatType;
+import com.company.model.game.Coordinate;
 import com.company.model.game.Direction;
+import com.company.model.lobby.Options;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class Player {
     private String name;
-    private Board personalBoard;
-    private int numberOfBoatsAlive = 0;
-    private HashMap<String, Board> attackBoards = new HashMap<>();
+    private UUID id = UUID.randomUUID();
+    private PlayerStatus status = PlayerStatus.WAITING;
 
-    private static ArrayList<Player> availeblePlayers = new ArrayList<>();
-    private static ArrayList<Direction> useDirections = new ArrayList<>();
+    private Options gameOptions;
+    private ArrayList<Boat> boats;
 
-    public Player(String name) {
+    private HashMap<String, Player> enemyShots;
+    private HashMap<String, Player> enemyHits;
+
+    private int boatsAlive;
+
+    public Player(String name, Options options) {
         this.name = name;
-    }
-    public Player(String name, Board personalBoard) {
-        this.name = name;
-        this.personalBoard = personalBoard;
+        this.gameOptions = options;
     }
 
-    //Sett
+    // Get
+    public String getName() {
+        return name;
+    }
+    public UUID getId() {
+        return id;
+    }
+    public PlayerStatus getStatus() {
+        return status;
+    }
+    public Options getGameOptions() {
+        return gameOptions;
+    }
+    public ArrayList<Boat> getBoats() {
+        return boats;
+    }
+    public HashMap<String, Player> getEnemyShots() {
+        return enemyShots;
+    }
+    public HashMap<String, Player> getEnemyHits() {
+        return enemyHits;
+    }
+    public int getBoatsAlive() {
+        return boatsAlive;
+    }
+
+    // Set
     public void setName(String name) {
         this.name = name;
     }
-    public void setPersonalBoard(Board personalBoard) {
-        this.personalBoard = personalBoard;
+    public void setId(UUID id) {
+        this.id = id;
     }
-    public void setAttackBoards(HashMap<String, Board> attackBoards) {
-        this.attackBoards = attackBoards;
+    public void setStatus(PlayerStatus status) {
+        this.status = status;
     }
-    public void addAttackBoard(Player player) {
-        this.attackBoards.put(player.getName(), new Board());
+    public void setGameOptions(Options gameOptions) {
+        this.gameOptions = gameOptions;
     }
-    public void setNumberOfBoatsAlive(int numberOfBoatsAlive) {
-        this.numberOfBoatsAlive = numberOfBoatsAlive;
+    public void setBoats(ArrayList<Boat> boats) {
+        this.boats = boats;
     }
-
-    public static void setUseDirections(ArrayList<Direction> directionArrayList) {
-        useDirections.addAll(directionArrayList);
+    public void setEnemyShots(HashMap<String, Player> enemyShots) {
+        this.enemyShots = enemyShots;
     }
-
-    //Get
-    public String getName() {
-        return this.name;
+    public void setEnemyHits(HashMap<String, Player> enemyHits) {
+        this.enemyHits = enemyHits;
     }
-    public Board getBoard() {
-        return personalBoard;
-    }
-    public Board getAttackBoard(String playerName) {
-        return attackBoards.get(playerName);
-    }
-    public Board getPersonalBoard() {
-        return personalBoard;
-    }
-    public int getNumberOfBoatsAlive() {
-        return numberOfBoatsAlive;
+    public void setBoatsAlive(int boatsAlive) {
+        this.boatsAlive = boatsAlive;
     }
 
-    public static ArrayList<Direction> getUseDirections() {
-        return useDirections;
-    }
-
-    //Other
-    public boolean attackPlayer(Player attackedPlayer, int x, int y) {
-        boolean hit = attackedPlayer.getBoard().attacked(x,y);
-        int placeValue = attackedPlayer.getBoard().getPlaceValue(x,y);
-
-        if (hit) {
-            if (placeValue < 19)
-                placeValue += 10;
-
-            attackedPlayer.getBoard().setPlace(x,y, placeValue);
-            attackBoards.get(attackedPlayer.getName()).setPlace(x,y, placeValue);
-            //System.out.println("Hit");
-            //System.out.println(boatDestroyed(x,y, placeValue - 10, attackedPlayer));
-            return true;
+    // Other
+    public void placeBoat(Coordinate coordinate, BoatType boatType, Direction direction) {
+        if (boatIsInsideBoard(coordinate, boatType, direction)) {
+            // Place boat
         } else {
-            attackBoards.get(attackedPlayer.getName()).setPlace(x,y, 1);
-            //System.out.println("Miss");
-            return false;
+            // Cant place Boat there
         }
     }
 
-    public void placeBoat(int x, int y, BoatTpes boatTpes, Direction direction) {
-        numberOfBoatsAlive += 1;
+    public boolean boatIsInsideBoard(Coordinate coordinate, BoatType boatType, Direction direction) {
+        int x = coordinate.getX();
+        int y = coordinate.getX();
 
-        if (personalBoard.boatIsInsideBoard(x, y, boatTpes, direction) && !personalBoard.boatsOverlap(x, y, boatTpes, direction)) {
-            for (int i = 0; i < boatTpes.getLength(); i++) {
-                personalBoard.setPlace(x,y, boatTpes.getId());
-                x += direction.getX();
-                y += direction.getY();
-            }
-        } else {
-            // Boat is outside of the board. Do something to fix it.
-        }
+        x += (direction.getX() * boatType.getLength());
+        y += (direction.getY() * boatType.getLength());
 
-
+        return (x <= 0 || gameOptions.getBoardX() >= x) || (y <= 0 || gameOptions.getBoardY() >= y);
     }
 
-    public boolean boatDestroyed(int x, int y, int id, Player player) {
-        //TODO: See if I need to know the boat ID or not.
-        BoatTpes boatTpes = BoatTpes.idToBoat(id);
-        boolean running;
-        int tempX, tempY;
-        int hit = 0;
-
-        if (boatTpes == null)   // Exit if there is no boat
-            return false;
-
-        for (Direction direction : useDirections) {
-            tempX = x + direction.getX();
-            tempY = y + direction.getY();
-            running = true;
-            while (running) {
-                if (hit >= boatTpes.getLength() - 1) {   // If the boat is destroyed
-                    player.removeBoat(1);
-                    return true;
-                } else if (tempX < 0 || tempY < 0 || tempX > Board.getDefaultX() - 1 || tempY > Board.getDefaultY() - 1) {    // If checking outside of the board    // TODO: change default size to somehing that is better. Test length of x and y and not use default size.
-                    running = false;
-                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == 0) {    // if the place is 0 (empty place)
-                    running = false;
-                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == 1) {    // if the place is 1 (Already hit place)
-                    running = false;
-                } else if (attackBoards.get(player.getName()).getPlaceValue(tempX,tempY) == boatTpes.getId() + 10) {    // If the place is the same hit boat
-                    hit++;
-                    tempX += direction.getX();
-                    tempY += direction.getY();
-                } else {
-                    running = false;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public void removeBoat(int numberOfBoats) {
-        numberOfBoatsAlive -= numberOfBoats;
-    }
-
-    public boolean noBoatsLeft() {
-        return numberOfBoatsAlive == 0;
-    }
-
-    //Print
-    public void printAttackBoard(String player) {
-        attackBoards.get(player).print();
-    }
 }
