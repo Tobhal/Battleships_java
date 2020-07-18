@@ -1,259 +1,70 @@
 package com.company;
 
-import com.company.model.game.*;
-//import com.company.model.game.player.Bot;
+import com.company.model.game.Boat;
+import com.company.model.game.BoatType;
+import com.company.model.game.Coordinate;
+import com.company.model.game.Direction;
 import com.company.model.game.player.Player;
+import com.company.model.lobby.Lobby;
+import com.company.model.lobby.Options;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 
-/*
-public class Application {
 
+public class Application {
     public static Scanner sc = new Scanner(System.in);
     public static boolean running = true;
-    public static int x = 0, y = 0, bots = 0;
+    public static int x, y;
+    public static Direction direction;
 
-    public static HashMap<String, Player> players = new HashMap<>();
-    public static ArrayList<BoatType> boatsToPlace = new ArrayList<>();
+    public static void main(String[] args) {
 
-    public static ArrayList<String> playersOut = new ArrayList<>();
-    public static ArrayList<Direction> directionsUse = new ArrayList<>();
+        Lobby lobby = new Lobby("Lobby 1");
+        Options options = new Options();
 
-    public static void main(String[] args) throws InterruptedException {
-        System.out.println("Application - test game");
+        options.setBoats(new ArrayList<>() {{
+            add(BoatType.CARRIER);
+        }});
 
-        //Game setup
-        Board.setDefaultSize(10);
+        lobby.setOptions(options);
 
-        boatsToPlace.add(BoatType.CARRIER);
-        boatsToPlace.add(BoatType.BATTLESHIP);
-        boatsToPlace.add(BoatType.CRUISER);
-        boatsToPlace.add(BoatType.SUBMARINE);
-        boatsToPlace.add(BoatType.DESTROYER);
+        // Adding players
+        lobby.addPlayer(new Player("Player 1", lobby.getOptions()));
+        lobby.addPlayer(new Player("Player 2", lobby.getOptions()));
 
-        directionsUse.add(Direction.UP);
-        directionsUse.add(Direction.DOWN);
-        directionsUse.add(Direction.LEFT);
-        directionsUse.add(Direction.RIGHT);
+        // Players place boats
+        for (Player player : lobby.getPlayers().values()) {
+            System.out.println("\n" + player.getName() + " Place your boats:");
 
-        Player.setUseDirections(directionsUse);
+            for (BoatType boatType : player.getGameOptions().getBoats()) {
+                System.out.println(boatType + "(" + boatType.getLength() + ")");
 
-        //Add players
-        System.out.println("Add player");
-
-        while (running) {
-            System.out.print("add player or move on (1/2/3(bot)): ");
-            switch (sc.next()) {
-                case "1":
-                    addPlayer();
-                    break;
-                case "2":
-                    running = false;
-                    System.out.println(players.size());
-                    break;
-                case "3":
-                    addBot();
-                default:
-                    System.out.println("Pleas enter 1 or 2");
-                    break;
-            }
-        }
-        // Create attack boards for all players
-        for (Player player : players.values()) {
-            for (Player otherPlayer : players.values()) {
-                if (!player.getName().equals(otherPlayer.getName())) {
-                    player.addAttackBoard(otherPlayer);
-                }
-            }
-        }
-
-        //Place boats
-        for (Player player : players.values()) {
-            if (player instanceof Bot) {
-                System.out.println(player.getName() + " placed his boats");
-
-                for (BoatType boatType : boatsToPlace) {
-                    Bot bot = (Bot)player;
-
-                    bot.placeBoat(boatType);
-                }
-            } else {
-                System.out.println("\n\n\n");
-                System.out.println(player.getName() + " place your boat" + (boatsToPlace.size() == 1 ? ":" : "s:"));
-
-                for (BoatType boatType : boatsToPlace) {
-                    placeBoat(player, boatType);
-                }
-            }
-            
-            player.getBoard().print();
-        }
-
-        //Players attack
-        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-        System.out.println("********************");
-        System.out.println("***  Attack Face ***");
-        System.out.println("********************");
-        System.out.println("\n\n\n\n\n");
-
-        running = true;
-        while (running) {
-            for (Player player : players.values()) {
-                if (players.values().size() == 1)
-                    playerWon(player);
-
-                if (!running)
-                    break;
-
-                if (playersOut.contains(player.getName()))
-                    continue;
-
-                if (player instanceof Bot) {
-                    Bot bot = (Bot)player;
-
-                    ArrayList<Player> availablePlayer = new ArrayList<>();
-
-                    players.values().forEach(p -> {
-                        if (!p.getName().equals(player.getName()))
-                            availablePlayer.add(p);
-                    });
-
-                    bot.attackPlayer(availablePlayer);
-
-                } else {
-                    System.out.println("\n\n\n\n\n\n");
-                    System.out.println("Players available:");
-
-                    for (Player player1 : players.values())
-                        System.out.print((playersOut.contains(player1.getName()) ? "" : player1.getName() + ", "));
-
-                    System.out.print("\n");
-
-                    System.out.print(player.getName() + " select player to attack (name of player, not you): \n");
-
-                    attackPlayer(player);
+                x = -1;
+                while (!(x < lobby.getOptions().getBoardX()) || !(x >= 0 )) {
+                    System.out.print("X = ");
+                    x = Integer.parseInt(sc.next());
                 }
 
-                if (player.getNumberOfBoatsAlive() <= 0) {
-                    playersOut.add(player.getName());
+                y = -1;
+                while (!(y < lobby.getOptions().getBoardY()) || !(y >= 0 )) {
+                    System.out.print("Y = ");
+                    y = Integer.parseInt(sc.next());
                 }
 
-                System.out.println("\n");
-                //TimeUnit.SECONDS.sleep(1);
+                System.out.print("Direction = ");
+                direction = Direction.valueOf(sc.next().toUpperCase());
 
+                player.placeBoat(new Coordinate(x, y), boatType, direction);
+                player.printBoard();
+
+                System.out.print("\n");
             }
-
-            for (String playerOut : playersOut)
-                players.remove(playerOut);
         }
 
-        //End
-        sc.close();
-    }
-
-    public static void addPlayer() {
-        String playerName;
-
-        System.out.print("Player Name: ");
-        playerName = sc.next();
-        playerName = playerName.toLowerCase();
-
-        if (players.containsKey(playerName))
-            addPlayer();
-        else
-            players.put(playerName, new Player(playerName, new Board()));
-    }
-
-    public static void addBot() {
-        bots++;
-        String botName = "bot_" + bots;
-
-        players.put(botName, new Bot(botName, new Board()));
-    }
-
-    public static void placeBoat(Player player, BoatType boatType) {
-        player.getBoard().print();
-
-        System.out.println(boatType.name() + "(" + boatType.getLength() + ")");
-
-        x = -1;
-        y = -1;
-
-        while (!(x < Board.getDefaultX()) || !(x > -1)) {
-            System.out.print("X: ");
-            x = Integer.parseInt(sc.next());
-        }
-
-        while (!(y < Board.getDefaultY()) || !(y > -1)) {
-            System.out.print("Y: ");
-            y = Integer.parseInt(sc.next());
-        }
-
-        System.out.print("Direction (up, down, left, right): ");
-        Direction direction = Direction.valueOf(sc.next().toUpperCase());   //TODO: #1
-        System.out.println("-----");
-
-        if (player.getBoard().boatsOverlap(x, y, boatType, direction)) {
-            System.out.println("Boat overlaps another boat. Try again!");
-            placeBoat(player, boatType);
-        } else if (player.getBoard().boatIsInsideBoard(x, y, boatType, direction)) {
-            player.placeBoat(x, y, boatType, direction);
-        } else {
-            System.out.println("\nThe boat wil be outside of the board.\nPleace try again, and do not place the boat outside of the board\n");
-            placeBoat(player, boatType);
-        }
-    }
-
-    public static void attackPlayer(Player player) {
-        String playerString = sc.next();
-        playerString = playerString.toLowerCase();
-
-        x = -1;
-        y = -1;
-
-        if (players.containsKey(playerString) && !playerString.equals(player.getName())) {
-            player.printAttackBoard(playerString);
-
-            while (!(x < Board.getDefaultX()) || !(x > -1)) {
-                System.out.print("Attack X: ");
-                x = Integer.parseInt(sc.next());
-            }
-
-            while (!(y < Board.getDefaultY()) || !(y > -1)) {
-                System.out.print("Attack Y: ");
-                y = Integer.parseInt(sc.next());
-            }
-
-            player.attackPlayer(players.get(playerString), x, y);
-
-            // Checks if a player has no boats left
-            if (players.get(playerString).noBoatsLeft())
-                playersOut.add(playerString);
+        // Players attack
 
 
-            // Checks if there is just 1 player left, then that player has won the game
-            if (players.values().size() == 1)
-                playerWon(player);
 
-            System.out.println("\n\n");
-        } else {
-            System.out.println("That name is wrong");
-            attackPlayer(player);
-        }
-    }
-
-    public static void playerWon(Player player) {
-
-        System.out.println("\n\n\n\n\n");
-        System.out.println("***** " + player.getName() + " won the game! *****");
-
-        running = false;
     }
 }
-*/
-/*
-TODO: #1 - Change code so it checks directionUse, so you cant use a direction that cant be used
-
-*/

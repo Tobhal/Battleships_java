@@ -48,7 +48,7 @@ public class Options {
     }
 
     public void setBoats(ArrayList<BoatType> boats) {
-        this.boats = boats;
+        this.boats = new ArrayList<>(boats);
     }
     public void setDirections(ArrayList<Direction> directions) {
         this.directions = directions;
@@ -56,4 +56,14 @@ public class Options {
 
     // Other
 
+
+    @Override
+    public String toString() {
+        return "Options{" +
+                "boardX=" + boardX +
+                ", boardY=" + boardY +
+                ", boats=" + boats +
+                ", directions=" + directions +
+                '}';
+    }
 }

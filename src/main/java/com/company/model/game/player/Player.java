@@ -7,6 +7,7 @@ import com.company.model.game.Direction;
 import com.company.model.lobby.Options;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -16,12 +17,12 @@ public class Player {
     private PlayerStatus status = PlayerStatus.WAITING;
 
     private Options gameOptions;
-    private ArrayList<Boat> boats;
+    private ArrayList<Boat> boats = new ArrayList<>();
 
-    private HashMap<String, Player> enemyShots;
-    private HashMap<String, Player> enemyHits;
+    private HashMap<String, Player> enemyShots = new HashMap<>();
+    private HashMap<String, Player> enemyHits = new HashMap<>();
 
-    private int boatsAlive;
+    private int boatsAlive = 0;
 
     public Player(String name, Options options) {
         this.name = name;
@@ -83,7 +84,8 @@ public class Player {
     // Other
     public void placeBoat(Coordinate coordinate, BoatType boatType, Direction direction) {
         if (boatIsInsideBoard(coordinate, boatType, direction)) {
-            // Place boat
+            boats.add(new Boat(coordinate, boatType, direction));
+            boatsAlive++;
         } else {
             // Cant place Boat there
         }
@@ -99,4 +101,42 @@ public class Player {
         return (x <= 0 || gameOptions.getBoardX() >= x) || (y <= 0 || gameOptions.getBoardY() >= y);
     }
 
+    public void printBoard() {
+        int[][] board = new int[gameOptions.getBoardY()][gameOptions.getBoardX()];
+
+        for (int i = 0; i < gameOptions.getBoardY(); i++) {
+            for (int l = 0; l < gameOptions.getBoardX(); l++) {
+                board[i][l] = 0;
+            }
+        }
+
+        int index = 1;
+        for (Boat boat : boats) {
+            for (Coordinate coordinate : boat.getPlacesTaken()) {
+                board[coordinate.getY()][coordinate.getX()] = index;
+            }
+            index++;
+        }
+
+        for (int i = gameOptions.getBoardY() - 1; i >= 0; i--) {
+            for (int l = 0; l < gameOptions.getBoardX(); l++) {
+                System.out.print(board[i][l] == 0 ? "00 " : "A" + board[i][l] + " ");
+            }
+            System.out.print("\n");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "name= '" + name + '\'' +
+                "\n\tid= " + id.toString() +
+                "\n\tstatus= " + status +
+                "\n\tgameOptions= " + gameOptions +
+                "\n\tboats= " + boats +
+                "\n\tenemyShots= " + enemyShots +
+                "\n\tenemyHits= " + enemyHits +
+                "\n\tboatsAlive= " + boatsAlive +
+                '}';
+    }
 }
