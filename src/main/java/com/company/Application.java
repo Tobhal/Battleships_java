@@ -12,7 +12,6 @@ import com.company.model.lobby.Options;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
 public class Application {
     public static Scanner sc = new Scanner(System.in);
     public static boolean running = true;
@@ -23,7 +22,6 @@ public class Application {
     public static ArrayList<Player> playersIn = new ArrayList<>();
 
     public static void main(String[] args) {
-
         Lobby lobby = new Lobby("Lobby 1");
         Options options = new Options();
 
@@ -46,7 +44,6 @@ public class Application {
             }
         }
 
-
         playersIn.addAll(lobby.getPlayers().values());
 
         // Players place boats
@@ -54,9 +51,8 @@ public class Application {
             if (player instanceof Bot) {
                 Bot bot = (Bot)player;
 
-                for (BoatType boatType : lobby.getOptions().getBoats()) {
+                for (BoatType boatType : lobby.getOptions().getBoats())
                     bot.placeBoat(boatType);
-                }
 
                 System.out.println();
                 player.printPrivateBoard();
@@ -85,9 +81,8 @@ public class Application {
                     playerAttack(lobby, player);
                 }
 
-                if (player.getStatus().equals(PlayerStatus.OUT) || player.getBoatsAlive() <= 0) {
+                if (player.getStatus().equals(PlayerStatus.OUT) || player.getBoatsAlive() <= 0)
                     playersOut.add(player);
-                }
 
                 player.setStatus(PlayerStatus.WAITING);
             }
@@ -113,28 +108,22 @@ public class Application {
             player.printPrivateBoard();
 
             System.out.println("\nHits:");
-            for (Player player1 : lobby.getPlayers().values()) {
-                if (!player1.getName().equals(player.getName())) {
+            for (Player player1 : lobby.getPlayers().values())
+                if (!player1.getName().equals(player.getName()))
                     System.out.println(player1.getName() + " -> " +(lobby.getOptions().getTotalHits() - player.getEnemyHits().get(player1.getName()).size()) + " -> " + player.getEnemyHits().get(player1.getName()).toString());
-                }
-            }
 
             System.out.println();
         }
-
-
     }
 
-    // Player
     public static void playerAdd(Lobby lobby) {
         System.out.print("Player name: ");
         String name = sc.next();
 
-        if (!lobby.getPlayers().containsKey(name)) {
+        if (!lobby.getPlayers().containsKey(name))
             lobby.addPlayer(new Player(name, lobby.getOptions()));
-        } else {
+        else
             System.out.print("That name exists, try again!");
-        }
 
         System.out.println();
     }
@@ -146,13 +135,13 @@ public class Application {
             System.out.println(boatType + "(" + boatType.getLength() + ")");
 
             x = -1;
-            while (!(x < lobby.getOptions().getBoardX()) || !(x >= 0 )) {
+            while (!(x < lobby.getOptions().getBoardX()) || !(x >= 0)) {
                 System.out.print("X = ");
                 x = Integer.parseInt(sc.next());
             }
 
             y = -1;
-            while (!(y < lobby.getOptions().getBoardY()) || !(y >= 0 )) {
+            while (!(y < lobby.getOptions().getBoardY()) || !(y >= 0)) {
                 System.out.print("Y = ");
                 y = Integer.parseInt(sc.next());
             }
@@ -169,11 +158,9 @@ public class Application {
 
     public static void playerAttack(Lobby lobby, Player player) {
         System.out.print(player.getName() + " Select players to attack (");
-        for (Player player1 : lobby.getPlayers().values()) {
-            if (!player1.getName().equals(player.getName())) {
+        for (Player player1 : lobby.getPlayers().values())
+            if (!player1.getName().equals(player.getName()))
                 System.out.print(player1.getName() + ", ");
-            }
-        }
 
         System.out.print(")");
 
@@ -199,16 +186,13 @@ public class Application {
 
         player.attackPlayer(new Coordinate(x,y), lobby.getPlayers().get(playerToAttack));
 
-        System.out.println();
-        System.out.println();
+        System.out.print("\n\n");
 
         player.printAttackBoard(playerToAttack);
 
-        System.out.println();
-        System.out.println();
+        System.out.print("\n\n");
     }
 
-    // Bot
     public static void botAdd(Lobby lobby) {
         lobby.addPlayer(new Bot("bot_" + ++bots, lobby.getOptions()));
         System.out.println("Bot_" + bots + " added");
