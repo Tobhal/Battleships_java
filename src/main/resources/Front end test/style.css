@@ -1,0 +1,25 @@
+body {
+  background-color: white;
+  filter: invert(0);
+}
+
+#board {
+  display: grid;
+}
+
+.squareContainer {
+  flex-wrap: wrap;
+
+  width: 100%;
+
+  display: flex;
+}
+
+.square {
+  background-color: black;
+
+  height: 50px;
+  width: 50px;
+
+  margin: 5px;
+}
