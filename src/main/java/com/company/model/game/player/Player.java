@@ -7,7 +7,6 @@ import com.company.model.game.Direction;
 import com.company.model.lobby.Options;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
