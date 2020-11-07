@@ -1,87 +1,211 @@
 package com.company;
 
-import com.company.model.*;
+import com.company.model.file.RWFile;
+import com.company.model.game.BoatType;
+import com.company.model.game.Coordinate;
+import com.company.model.game.Direction;
+import com.company.model.game.player.Bot;
+import com.company.model.game.player.Player;
+import com.company.model.game.player.PlayerStatus;
+import com.company.model.lobby.Lobby;
+import com.company.model.lobby.Options;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Main {
+    public static Scanner sc = new Scanner(System.in);
+    public static boolean running = true;
+    public static int x, y, bots = 0;
+    public static Direction direction;
+
+    public static ArrayList<Player> playersOut = new ArrayList<>();
+    public static ArrayList<Player> playersIn = new ArrayList<>();
+
     public static void main(String[] args) {
-        HashMap<String, Player> players = new HashMap<>();
+        Lobby lobby = new Lobby("Lobby 1");
+        Options options = new Options();
 
-        Board.setDefaultSize(10);
+        lobby.setOptions(options);
 
-        // Player setup
-        Player player1 = new Player("player 1", new Board());
-        Player player2 = new Player("player 2", new Board());
-        Player player3 = new Player("player 3", new Board());
-        Player player4 = new Bot("player 4", new Board());
+        // Adding players
+        while (running) {
+            int input = -1;
 
-        System.out.println(player1.getClass());
-        System.out.println(player1.getClass());
+            while (!(input < 4) || !(input > 0)) {
+                System.out.print("Add player (1), bot (2) or continue (3): ");
 
-        players.put(player1.getName(), player1);
-        players.put(player2.getName(), player2);
-        players.put(player3.getName(), player3);
-        players.put(player4.getName(), player4);
+                input = Integer.parseInt(sc.next());
+            }
 
-        for (Player player : players.values()) {
-            for (Player otherplayer : players.values()) {
-                if (!player.getName().equals(otherplayer.getName())) {
-                    player.addAttackBoard(otherplayer);
-                }
+            switch (input) {
+                case 1: playerAdd(lobby); break;
+                case 2: botAdd(lobby); break;
+                case 3: running = false; break;
             }
         }
 
-        // "Game"
-        for (Player player : players.values()) {
-            // System.out.println(player.getName());
-            player.placeBoat(0,5, Boat.CARRIER, Direction.RIGHT);
-            player.placeBoat(1,0, Boat.BATTLESHIP, Direction.DOWN);
-            player.placeBoat(2,0, Boat.CRUISER, Direction.DOWN);
-            player.placeBoat(3,0, Boat.SUBMARINE, Direction.DOWN);
-            player.placeBoat(4,0, Boat.DESTROYER, Direction.DOWN);
+        playersIn.addAll(lobby.getPlayers().values());
 
-            // player.getBoard().print();
+        // Players place boats
+        for (Player player : lobby.getPlayers().values()) {
+            if (player instanceof Bot) {
+                Bot bot = (Bot)player;
+
+                for (BoatType boatType : lobby.getOptions().getBoats())
+                    bot.placeBoat(boatType);
+
+                System.out.println();
+                player.printPrivateBoard();
+                System.out.println("\n");
+            } else {
+                playerPlace(lobby, player);
+            }
         }
 
-        // False
-        System.out.println("False:");
-        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.UP));
-        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.LEFT));
-        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.UP_LEFT));
-        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.UP_RIGHT));
-        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.DOWN_LEFT));
+        System.out.println("*** *** *** ***");
+        System.out.println("  Attack Face  ");
+        System.out.println("*** *** *** ***");
+        System.out.print("\n\n\n\n");
 
-        System.out.println("\nTrue:");
-        // True
-        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.DOWN));
-        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.RIGHT));
-        System.out.println(player1.getBoard().boatIsInsideBoard(0,0, Boat.CARRIER, Direction.DOWN_RIGHT));
+        // Players attack
+        running = true;
+        while (running) {
+            for (Player player : playersIn) {
+                player.setStatus(PlayerStatus.TURN);
 
-        System.out.println("----****----");
-        System.out.println("Player 2 board:");
-        player2.getBoard().print();
+                if (player instanceof  Bot) {
+                    Bot bot = (Bot)player;
 
-        System.out.println("\nBoat destroyed?");
-        player1.attackPlayer(player2,4,0);
-        player1.attackPlayer(player2,4,1);
+                    bot.attackPlayer(playersIn);
+                } else {
+                    playerAttack(lobby, player);
+                }
 
-        player1.attackPlayer(player2,0,0);
-        player1.attackPlayer(player2,0,1);
-        player1.attackPlayer(player2,0,2);
-        player1.attackPlayer(player2,0,3);
-        player1.attackPlayer(player2,0,4);
+                if (player.getStatus().equals(PlayerStatus.OUT) || player.getBoatsAlive() <= 0)
+                    playersOut.add(player);
 
-        player1.attackPlayer(player2,0,5);
-        player1.attackPlayer(player2,1,5);
-        player1.attackPlayer(player2,2,5);
-        player1.attackPlayer(player2,3,5);
-        player1.attackPlayer(player2,4,5);
-        player1.attackPlayer(player2,5,5);
+                player.setStatus(PlayerStatus.WAITING);
+            }
 
+            for (Player player : playersOut) {
+                playersIn.remove(player);
+                player.setStatus(PlayerStatus.OUT);
+            }
 
-        System.out.println("\nTest if correct");
-        player1.getAttackBoard("player 2").print();
+            if (playersIn.size() == 1) {
+                System.out.println("\n\n\n");
+                System.out.println("*** *** *** *** *** *** ***");
+                System.out.println("Player " + playersIn.get(0).getName() + " won the game!");
+                System.out.println("*** *** *** *** *** *** ***");
+                System.out.println("\n\n\n");
+                running = false;
+            }
+        }
+
+        /*
+        System.out.println("Player boards:");
+        for (Player player : lobby.getPlayers().values()) {
+            System.out.println(player.getName() + " - " + player.getBoatsAlive());
+            player.printPrivateBoard();
+
+            System.out.println("\nHits:");
+            for (Player player1 : lobby.getPlayers().values())
+                if (!player1.getName().equals(player.getName()))
+                    System.out.println(player1.getName() + " -> " +(lobby.getOptions().getTotalHits() - player.getEnemyHits().get(player1.getName()).size()) + " -> " + player.getEnemyHits().get(player1.getName()).toString());
+
+            System.out.println();
+        }
+         */
+
+        HashMap<String, Lobby> lobbyHashMap = new HashMap<>();
+
+        lobbyHashMap.put(lobby.getName(), lobby);
+
+        RWFile.save("JSON/Game.json", lobbyHashMap);
+    }
+
+    public static void playerAdd(Lobby lobby) {
+        System.out.print("Player name: ");
+        String name = sc.next();
+
+        if (!lobby.getPlayers().containsKey(name))
+            lobby.addPlayer(new Player(name, lobby.getOptions()));
+        else
+            System.out.print("That name exists, try again!");
+
+        System.out.println();
+    }
+
+    public static void playerPlace(Lobby lobby, Player player) {
+        System.out.println("\n" + player.getName() + " Place your boats:");
+
+        for (BoatType boatType : player.getGameOptions().getBoats()) {
+            System.out.println(boatType + "(" + boatType.getLength() + ")");
+
+            x = -1;
+            while (!(x < lobby.getOptions().getBoardX()) || !(x >= 0)) {
+                System.out.print("X = ");
+                x = Integer.parseInt(sc.next());
+            }
+
+            y = -1;
+            while (!(y < lobby.getOptions().getBoardY()) || !(y >= 0)) {
+                System.out.print("Y = ");
+                y = Integer.parseInt(sc.next());
+            }
+
+            System.out.print("Direction = ");
+            direction = Direction.valueOf(sc.next().toUpperCase());
+
+            player.placeBoat(new Coordinate(x, y), boatType, direction);
+            player.printPrivateBoard();
+
+            System.out.print("\n");
+        }
+    }
+
+    public static void playerAttack(Lobby lobby, Player player) {
+        System.out.print(player.getName() + " Select players to attack (");
+        for (Player player1 : lobby.getPlayers().values())
+            if (!player1.getName().equals(player.getName()))
+                System.out.print(player1.getName() + ", ");
+
+        System.out.print(")");
+
+        String playerToAttack = "";
+        while (!lobby.getPlayers().containsKey(playerToAttack)) {
+            System.out.print("\nPlayer = ");
+            playerToAttack = sc.next();
+        }
+
+        System.out.println("\nWhere to attack?");
+
+        x = -1;
+        while (!(x < lobby.getOptions().getBoardX()) || !(x >= 0 )) {
+            System.out.print("X = ");
+            x = Integer.parseInt(sc.next());
+        }
+
+        y = -1;
+        while (!(y < lobby.getOptions().getBoardY()) || !(y >= 0 )) {
+            System.out.print("Y = ");
+            y = Integer.parseInt(sc.next());
+        }
+
+        player.attackPlayer(new Coordinate(x,y), lobby.getPlayers().get(playerToAttack));
+
+        System.out.print("\n\n");
+
+        player.printAttackBoard(playerToAttack);
+
+        System.out.print("\n\n");
+    }
+
+    public static void botAdd(Lobby lobby) {
+        lobby.addPlayer(new Bot("bot_" + ++bots, lobby.getOptions()));
+        System.out.println("Bot_" + bots + " added");
     }
 }
 

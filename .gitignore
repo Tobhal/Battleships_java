@@ -1,3 +1,15 @@
+# Project exclude paths
 /out/
-/.gradle/
 /.idea/
+src/main/java/.DS_Store
+src/main/resources/vue/.DS_Store
+src/main/resources/vue/views/.DS_Store
+src/main/resources/.DS_Store
+src/main/java/model/com/company/.DS_Store
+src/main/java/com/company/.DS_Store
+src/main/java/com/company/model/.DS_Store
+Oblig-6.iml# Java-oblig-6
+build/
+.gradle/
+CSV/*
+JSON/*
