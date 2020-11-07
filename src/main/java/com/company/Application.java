@@ -17,13 +17,19 @@ public class Application {
         app.before("/", ctx -> ctx.redirect("/main-view"));
 
         // Pages
-        app.get("main-view", new VueComponent("main-view"));
+        app.get("/main-view", new VueComponent("main-view"));
+        app.get("/lobby/:lobbyID", new VueComponent("lobby-view"));
+        app.get("/lobby/:lobbyName", new VueComponent("lobby-view"));
+
+        app.get("test", new VueComponent("Test"));
 
         // Controller
         GameController gameController = new GameController(new GameRepository());
 
         // API
         app.get("/api/lobbies", gameController::getLobbies);
+        app.get("/api/lobby/:lobbyID", gameController::getLobbyID);
+        app.get("/api/lobby/:lobbyName", gameController::getLobbyName);
 
 
     }

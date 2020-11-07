@@ -10,6 +10,9 @@ public interface IGameRepository {
     ArrayList<Lobby> getAllLobbiesArray();
     HashMap<String, Lobby> getAllLobbiesHash();
 
+    Lobby getLobbyName(String lobbyName);
+    Lobby getLobbyID(String id);
+
     // Create
 
 

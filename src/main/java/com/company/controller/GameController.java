@@ -15,5 +15,14 @@ public class GameController {
         ctx.json(gameRepository.getAllLobbiesArray());
     }
 
+    public void getLobbyID(Context ctx) {
+        String lobbyID = ctx.pathParam("lobbyID");
+        ctx.json(gameRepository.getLobbyID(lobbyID));
+    }
+
+    public void getLobbyName(Context ctx) {
+        String lobbyName = ctx.pathParam("lobbyName");
+        ctx.json(gameRepository.getLobbyName(lobbyName));
+    }
 
 }

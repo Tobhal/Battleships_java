@@ -7,19 +7,76 @@
 </head>
 <body>
 <main id="main-vue" v-cloak>
+    <!--
+    <header>
+        <h1>Header</h1>
+    </header>
+
+    <nav>
+        <p>Item</p>
+        <p>Item</p>
+    </nav>
+
+
+    <div class="content">
+        @routeComponent
+    </div>
+    -->
+
     @routeComponent
+
 </main>
 <script>
     new Vue({el: "#main-vue"});
 </script>
 <style>
-    body{
+    body {
         background-color: #000000;
         color: white;
         max-width: 1800px;
         font-family: "Roboto";
         line-height: 1.6;
     }
+
+
+
+
+    /*
+    main {
+        display: grid;
+        grid-auto-rows: auto 40px auto;
+        grid-template-areas:
+        "Header"
+        "NavBar"
+        "Content";
+    }
+
+
+    main header {
+        grid-area: Header;
+    }
+
+    main header h1 {
+        margin: 5px;
+    }
+
+
+    nav {
+        grid-area: NavBar;
+
+        display: flex;
+        flex-direction: row;
+    }
+
+    nav p {
+        margin: 0;
+        padding: 5px;
+    }
+
+    .content {
+        grid-area: Content;
+    }
+     */
 
 </style>
 </body>

@@ -30,6 +30,26 @@ public class GameRepository implements IGameRepository {
         return lobbies;
     }
 
+    @Override
+    public Lobby getLobbyName(String lobbyName) {
+        for (Lobby lobby : lobbies.values())
+            if (lobby.getName().equals(lobbyName))
+                return lobby;
+
+        return null;
+    }
+
+    @Override
+    public Lobby getLobbyID(String id) {
+        for (Lobby lobby : lobbies.values())
+            if (lobby.getId().toString().equals(id))
+                return lobby;
+
+        return null;
+    }
+
+
+
     /*
     Create
      */
