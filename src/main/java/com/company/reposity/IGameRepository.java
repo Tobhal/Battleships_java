@@ -1,5 +1,6 @@
 package com.company.reposity;
 
+import com.company.model.game.player.Player;
 import com.company.model.lobby.Lobby;
 
 import java.util.ArrayList;
@@ -10,8 +11,9 @@ public interface IGameRepository {
     ArrayList<Lobby> getAllLobbiesArray();
     HashMap<String, Lobby> getAllLobbiesHash();
 
-    Lobby getLobbyName(String lobbyName);
-    Lobby getLobbyID(String id);
+    Lobby getLobby(String id);
+
+    Player getPlayer(String lobbyID, String playerID);
 
     // Create
 

@@ -25,6 +25,8 @@
 
     @routeComponent
 
+    <div id="board"></div>
+
 </main>
 <script>
     new Vue({el: "#main-vue"});
@@ -38,6 +40,29 @@
         line-height: 1.6;
     }
 
+    /*
+  Board css
+   */
+    #board {
+        display: grid;
+    }
+
+    .squareContainer {
+        flex-wrap: wrap;
+
+        width: 100%;
+
+        display: flex;
+    }
+
+    .square {
+        background-color: white;
+
+        height: 50px;
+        width: 50px;
+
+        margin: 5px;
+    }
 
 
 

@@ -15,14 +15,15 @@ public class GameController {
         ctx.json(gameRepository.getAllLobbiesArray());
     }
 
-    public void getLobbyID(Context ctx) {
-        String lobbyID = ctx.pathParam("lobbyID");
-        ctx.json(gameRepository.getLobbyID(lobbyID));
+    public void getLobby(Context ctx) {
+        String lobby = ctx.pathParam("lobbyID");
+        ctx.json(gameRepository.getLobby(lobby));
     }
 
-    public void getLobbyName(Context ctx) {
-        String lobbyName = ctx.pathParam("lobbyName");
-        ctx.json(gameRepository.getLobbyName(lobbyName));
+    public void getPlayer(Context ctx) {
+        String lobby = ctx.pathParam("lobbyID");
+        String player = ctx.pathParam("playerID");
+        ctx.json(gameRepository.getPlayer(lobby, player));
     }
 
 }

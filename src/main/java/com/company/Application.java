@@ -1,6 +1,5 @@
 package com.company;
 
-
 import com.company.controller.GameController;
 import com.company.reposity.GameRepository;
 import io.javalin.Javalin;
@@ -19,7 +18,7 @@ public class Application {
         // Pages
         app.get("/main-view", new VueComponent("main-view"));
         app.get("/lobby/:lobbyID", new VueComponent("lobby-view"));
-        app.get("/lobby/:lobbyName", new VueComponent("lobby-view"));
+        app.get("/lobby/:lobbyID/player/:playerID", new VueComponent("player-view"));
 
         app.get("test", new VueComponent("Test"));
 
@@ -28,9 +27,8 @@ public class Application {
 
         // API
         app.get("/api/lobbies", gameController::getLobbies);
-        app.get("/api/lobby/:lobbyID", gameController::getLobbyID);
-        app.get("/api/lobby/:lobbyName", gameController::getLobbyName);
-
+        app.get("/api/lobby/:lobbyID", gameController::getLobby);
+        app.get("/api/lobby/:lobbyID/player/:playerID", gameController::getPlayer);
 
     }
 }

@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Bot.class, name = "bot")
 })
 
-
 public class Player {
     private String name;
     private UUID id = UUID.randomUUID();

@@ -1,5 +1,6 @@
 package com.company.reposity;
 
+import com.company.model.game.player.Player;
 import com.company.model.lobby.Lobby;
 import com.company.model.file.RWFile;
 
@@ -31,22 +32,23 @@ public class GameRepository implements IGameRepository {
     }
 
     @Override
-    public Lobby getLobbyName(String lobbyName) {
-        for (Lobby lobby : lobbies.values())
-            if (lobby.getName().equals(lobbyName))
-                return lobby;
-
-        return null;
-    }
-
-    @Override
-    public Lobby getLobbyID(String id) {
+    public Lobby getLobby(String id) {
         for (Lobby lobby : lobbies.values())
             if (lobby.getId().toString().equals(id))
                 return lobby;
 
         return null;
     }
+
+    @Override
+    public Player getPlayer(String lobbyID, String playerID) {
+        for (Player player : getLobby(lobbyID).getPlayers().values())
+            if (player.getId().toString().equals(playerID))
+                return player;
+
+        return null;
+    }
+
 
 
 
